@@ -59,7 +59,7 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
                 default:
                     toast.error(
                         graphQLError.message ||
-                        'An unknown error has occurred whilst communicating with the server.'
+                            'An unknown error has occurred whilst communicating with the server.'
                     );
 
                     break;

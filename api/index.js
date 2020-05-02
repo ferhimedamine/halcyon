@@ -5,19 +5,24 @@ const { openConnection } = require('./_utils/mongo');
 const server = new ApolloServer({
     typeDefs,
     resolvers,
-    context
+    context,
+    introspection: true,
+    playground: true,
+    plugins: [
+        {
+            serverWillStart() {
+                return openConnection();
+            }
+        }
+    ]
 });
 
 const handler = server.createHandler({ path: '/api' });
 
-export const config = {
+module.exports.config = {
     api: {
         bodyParser: false
     }
 };
 
-export default (...args) => {
-    openConnection().then(() => {
-        handler(...args);
-    });
-};
+module.exports = handler;

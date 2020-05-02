@@ -13,12 +13,10 @@ import { getItem, setItem, removeItem } from '../utils/storage';
 
 const cache = new InMemoryCache();
 
-const httpLink = new HttpLink({
-    uri: process.env.REACT_APP_GRAPHQL_URL
-});
+const httpLink = new HttpLink({ uri: '/api' });
 
 const wsLink = new WebSocketLink({
-    uri: process.env.REACT_APP_GRAPHQL_WS,
+    uri: process.env.REACT_APP_GRAPHQL_WS || 'ws://localhost:3000/api',
     options: {
         reconnect: true,
         connectionParams: () => ({
@@ -61,7 +59,7 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
                 default:
                     toast.error(
                         graphQLError.message ||
-                            'An unknown error has occurred whilst communicating with the server.'
+                        'An unknown error has occurred whilst communicating with the server.'
                     );
 
                     break;

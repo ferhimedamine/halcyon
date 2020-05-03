@@ -11,6 +11,7 @@ export const USER_UPDATED = gql`
                 lastName
                 dateOfBirth
                 isLockedOut
+                picture
                 roles
             }
         }

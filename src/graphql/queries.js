@@ -22,6 +22,7 @@ export const GET_PROFILE = gql`
             lastName
             dateOfBirth
             isLockedOut
+            picture
             roles
         }
     }
@@ -42,6 +43,7 @@ export const SEARCH_USERS = gql`
                 lastName
                 dateOfBirth
                 isLockedOut
+                picture
                 roles
             }
             totalCount
@@ -60,6 +62,7 @@ export const GET_USER_BY_ID = gql`
             lastName
             dateOfBirth
             isLockedOut
+            picture
             roles
         }
     }

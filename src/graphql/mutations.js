@@ -44,7 +44,6 @@ export const REGISTER = gql`
                 lastName
                 dateOfBirth
                 isLockedOut
-                picture
                 roles
             }
         }
@@ -97,7 +96,6 @@ export const UPDATE_PROFILE = gql`
                 firstName
                 lastName
                 dateOfBirth
-                picture
             }
         }
     }
@@ -149,7 +147,6 @@ export const CREATE_USER = gql`
                 lastName
                 dateOfBirth
                 isLockedOut
-                picture
                 roles
             }
         }
@@ -182,7 +179,6 @@ export const UPDATE_USER = gql`
                 firstName
                 lastName
                 dateOfBirth
-                picture
                 roles
             }
         }

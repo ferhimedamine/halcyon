@@ -7,12 +7,14 @@ A web application template.
 ## Technologies
 
 **Client**
+
 -   React
     [https://reactjs.org](https://reactjs.org)
 -   Apollo Client
     [https://www.apollographql.com](https://www.apollographql.com)
 
 **Api**
+
 -   Node.js
     [https://nodejs.org](https://nodejs.org)
 -   Apollo Server
@@ -20,8 +22,8 @@ A web application template.
 -   MongoDB
     [https://www.mongodb.com](https://www.mongodb.com)
 
-
 **Hosting**
+
 -   Vercel
     [https://vercel.com](https://vercel.com)
 
@@ -47,6 +49,9 @@ Create a `.env` file in root directory:
 # Client Settings
 REACT_APP_GRAPHQL_WS=
 
+REACT_APP_SENTRY_DSN=
+REACT_APP_SENTRY_ENVIRONMENT=
+
 # Api Settings
 MONGODB_URI=
 
@@ -62,9 +67,11 @@ SMTP_NOREPLY=
 
 SEED_EMAILADDRESS=
 SEED_PASSWORD=
+
+SENTRY_DSN=
+SENTRY_ENVIRONMENT=
 ```
 
 Start the application by running the command:
 
     now dev
-

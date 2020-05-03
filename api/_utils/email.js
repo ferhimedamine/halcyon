@@ -1,6 +1,7 @@
 const nodemailer = require('nodemailer');
 const emailTemplates = require('../_emailTemplates');
 const { format } = require('./string');
+const { captureException } = require('./logger');
 const config = require('./config');
 
 module.exports.sendEmail = async message => {
@@ -25,6 +26,6 @@ module.exports.sendEmail = async message => {
             html
         });
     } catch (error) {
-        console.error(error);
+        captureException(error);
     }
 };

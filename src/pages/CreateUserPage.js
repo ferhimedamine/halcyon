@@ -7,6 +7,7 @@ import { Container, FormGroup } from 'reactstrap';
 import { toast } from 'react-toastify';
 import { CREATE_USER } from '../graphql';
 import { AVAILABLE_ROLES } from '../utils/auth';
+import { captureException } from '../utils/logger';
 import {
     TextInput,
     DateInput,
@@ -52,7 +53,7 @@ export const CreateUserPage = ({ history }) => {
             toast.success(result.data.createUser.message);
             history.push('/user');
         } catch (error) {
-            console.error(error);
+            captureException(error);
         }
     };
 

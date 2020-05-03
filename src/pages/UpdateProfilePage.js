@@ -6,6 +6,7 @@ import * as Yup from 'yup';
 import { Container, Alert, FormGroup } from 'reactstrap';
 import { toast } from 'react-toastify';
 import { GET_PROFILE, UPDATE_PROFILE } from '../graphql';
+import { captureException } from '../utils/logger';
 import { Spinner, TextInput, DateInput, Button } from '../components';
 
 const validationSchema = Yup.object().shape({
@@ -42,7 +43,7 @@ export const UpdateProfilePage = ({ history }) => {
             toast.success(result.data.updateProfile.message);
             history.push('/my-account');
         } catch (error) {
-            console.error(error);
+            captureException(error);
         }
     };
 

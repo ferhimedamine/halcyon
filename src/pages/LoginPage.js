@@ -5,6 +5,7 @@ import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { Container, FormGroup } from 'reactstrap';
 import { setToken, GENERATE_TOKEN } from '../graphql';
+import { captureException } from '../utils/logger';
 import { TextInput, CheckboxInput, Button } from '../components';
 
 const initialValues = {
@@ -32,7 +33,7 @@ export const LoginPage = ({ history }) => {
             );
             history.push('/');
         } catch (error) {
-            console.error(error);
+            captureException(error);
         }
     };
 

@@ -5,6 +5,7 @@ import * as Yup from 'yup';
 import { Container, FormGroup } from 'reactstrap';
 import { toast } from 'react-toastify';
 import { FORGOT_PASSWORD } from '../graphql';
+import { captureException } from '../utils/logger';
 import { TextInput, Button } from '../components';
 
 const initialValues = {
@@ -24,7 +25,7 @@ export const ForgotPasswordPage = ({ history }) => {
             toast.success(result.data.forgotPassword.message);
             history.push('/login');
         } catch (error) {
-            console.error(error);
+            captureException(error);
         }
     };
 

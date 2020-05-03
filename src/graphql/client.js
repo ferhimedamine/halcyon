@@ -10,13 +10,15 @@ import jwtDecode from 'jwt-decode';
 import { toast } from 'react-toastify';
 import { GET_LOCAL_CONTEXT } from './queries';
 import { getItem, setItem, removeItem } from '../utils/storage';
+import { setUserContext } from '../utils/logger';
+import config from '../utils/config';
 
 const cache = new InMemoryCache();
 
-const httpLink = new HttpLink({ uri: '/api' });
+const httpLink = new HttpLink({ uri: config.GRAPHQL_URL });
 
 const wsLink = new WebSocketLink({
-    uri: process.env.REACT_APP_GRAPHQL_WS || 'ws://localhost:3000/api',
+    uri: config.GRAPHQL_WS,
     options: {
         reconnect: true,
         connectionParams: () => ({
@@ -103,6 +105,8 @@ const onResetStore = () => {
                 }
             }
         });
+
+        setUserContext(decodedToken);
     } else {
         cache.writeData({
             data: {
@@ -110,6 +114,8 @@ const onResetStore = () => {
                 currentUser: null
             }
         });
+
+        setUserContext(undefined);
     }
 
     wsLink.subscriptionClient.close(false, false);

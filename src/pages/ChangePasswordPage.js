@@ -6,6 +6,7 @@ import * as Yup from 'yup';
 import { Container, FormGroup } from 'reactstrap';
 import { toast } from 'react-toastify';
 import { CHANGE_PASSWORD } from '../graphql';
+import { captureException } from '../utils/logger';
 import { TextInput, Button } from '../components';
 
 const initialValues = {
@@ -35,7 +36,7 @@ export const ChangePasswordPage = ({ history }) => {
             toast.success(result.data.changePassword.message);
             history.push('/my-account');
         } catch (error) {
-            console.error(error);
+            captureException(error);
         }
     };
 

@@ -5,6 +5,7 @@ import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { Container, FormGroup } from 'reactstrap';
 import { setToken, REGISTER, GENERATE_TOKEN } from '../graphql';
+import { captureException } from '../utils/logger';
 import { TextInput, DateInput, Button } from '../components';
 
 const initialValues = {
@@ -50,7 +51,7 @@ export const RegisterPage = ({ history }) => {
             setToken(result.data.generateToken.accessToken);
             history.push('/');
         } catch (error) {
-            console.error(error);
+            captureException(error);
         }
     };
 

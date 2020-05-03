@@ -14,6 +14,7 @@ import {
     DELETE_USER
 } from '../graphql';
 import { AVAILABLE_ROLES } from '../utils/auth';
+import { captureException } from '../utils/logger';
 import {
     Spinner,
     TextInput,
@@ -72,7 +73,7 @@ export const UpdateUserPage = ({ history, match }) => {
             toast.success(result.data.updateUser.message);
             history.push('/user');
         } catch (error) {
-            console.error(error);
+            captureException(error);
         }
     };
 

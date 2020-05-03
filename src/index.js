@@ -2,7 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import * as serviceWorker from './serviceWorker';
 import { App } from './App';
+import { initializeLogger } from './utils/logger';
 import './index.scss';
+
+initializeLogger();
 
 ReactDOM.render(<App />, document.getElementById('root'));
 

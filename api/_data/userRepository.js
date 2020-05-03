@@ -1,73 +1,111 @@
-const UserModel = require('./userModel');
+const { Client, query: q } = require('faunadb');
+const config = require('../_utils/config');
 
-module.exports.getUserById = id => UserModel.findById(id);
+const client = new Client({ secret: config.FAUNADB_SECRET });
 
-module.exports.getUserByEmailAddress = emailAddress =>
-    UserModel.findOne({
-        emailAddress
-    });
+module.exports.getUserById = async id => {
+    try {
+        const result = await client.query(
+            q.Get(q.Ref(q.Collection('users'), id))
+        );
 
-module.exports.createUser = user => new UserModel(user).save();
+        return { ...result.data, id: result.ref.id };
+    } catch (error) {
+        if (error.name === 'NotFound') {
+            return undefined;
+        }
 
-module.exports.updateUser = user => user.save();
+        throw error;
+    }
+};
 
-module.exports.removeUser = user => user.remove();
+module.exports.getUserByEmailAddress = async emailAddress => {
+    try {
+        const result = await client.query(
+            q.Get(q.Match(q.Index('users_by_email_address'), emailAddress))
+        );
 
-module.exports.searchUsers = async (page, size, search, sort) => {
-    const searchExpression = getSearchExpression(search);
-    const sortExpression = getSortExpression(sort);
+        return mapUser(result);
+    } catch (error) {
+        if (error.name === 'NotFound') {
+            return undefined;
+        }
 
-    const totalCount = await UserModel.find(searchExpression).countDocuments();
+        throw error;
+    }
+};
 
-    const users = await UserModel.find(searchExpression)
-        .sort(sortExpression)
-        .limit(size)
-        .skip(size * (page - 1))
-        .exec();
+module.exports.createUser = async user => {
+    const result = await client.query(
+        q.Create(q.Collection('users'), { data: user })
+    );
 
-    const totalPages = Math.ceil(totalCount / size);
+    return mapUser(result);
+};
+
+module.exports.updateUser = async user => {
+    const { id, ...data } = user;
+
+    const result = await client.query(
+        q.Replace(q.Ref(q.Collection('users'), id), { data })
+    );
+
+    return mapUser(result);
+};
+
+module.exports.removeUser = async ({ id }) => {
+    const result = await client.query(
+        q.Delete(q.Ref(q.Collection('users'), id))
+    );
+
+    return mapUser(result);
+};
+
+module.exports.searchUsers = async ({ size, search, sort, cursor }) => {
+    const { name, fields } = getIndex(sort);
+
+    const result = await client.query(
+        q.Map(
+            q.Paginate(q.Match(q.Index(name)), {
+                size: Math.min(size, 50)
+            }),
+            q.Lambda(fields, q.Get(q.Var('ref')))
+        )
+    );
 
     return {
-        items: users,
-        page,
-        size,
-        totalPages,
-        totalCount,
-        hasNextPage: page < totalPages,
-        hasPreviousPage: page > 1
+        items: result.data.map(mapUser),
+        before: undefined,
+        after: undefined
     };
 };
 
-const getSearchExpression = search => {
-    if (!search) {
-        return undefined;
-    }
-
-    return { $text: { $search: search } };
-};
-
-const getSortExpression = sort => {
-    const sortExpression = [];
-
+const getIndex = sort => {
     switch (sort) {
         case 'EMAIL_ADDRESS_DESC':
-            sortExpression.push(['emailAddress', 'descending']);
-            break;
+            return {
+                name: 'users_email_address_desc',
+                fields: ['emailAddress', 'ref']
+            };
 
-        case 'EMAIL_ADDRESS':
-            sortExpression.push(['emailAddress', 'ascending']);
-            break;
+        case 'EMAIL_ADDRESS_ASC':
+            return {
+                name: 'users_email_address_asc',
+                fields: ['emailAddress', 'ref']
+            };
 
-        case 'DISPLAY_NAME_DESC':
-            sortExpression.push(['firstName', 'descending']);
-            sortExpression.push(['lastName', 'descending']);
-            break;
+        case 'NAME_DESC':
+            return {
+                name: 'users_name_desc',
+                fields: ['firstName', 'lastName', 'ref']
+            };
 
         default:
-            sortExpression.push(['firstName', 'ascending']);
-            sortExpression.push(['lastName', 'ascending']);
-            break;
+            return {
+                name: 'users_name_asc',
+                fields: ['firstName', 'lastName', 'ref']
+            };
     }
-
-    return sortExpression;
 };
+
+const mapUser = user => ({ id: user.ref.id, ...user.data });

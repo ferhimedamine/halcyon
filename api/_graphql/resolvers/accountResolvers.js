@@ -19,15 +19,15 @@ module.exports = {
                 );
             }
 
-            const user = {
+            const result = await createUser({
                 emailAddress: input.emailAddress,
                 password: await hashPassword(input.password),
                 firstName: input.firstName,
                 lastName: input.lastName,
-                dateOfBirth: input.dateOfBirth
-            };
-
-            const result = await createUser(user);
+                dateOfBirth: input.dateOfBirth.toISOString(),
+                isLockedOut: false,
+                roles: []
+            });
 
             pubsub.publish('userUpdated', {
                 userUpdated: {

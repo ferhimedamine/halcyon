@@ -21,18 +21,18 @@ import { SEARCH_USERS } from '../graphql';
 import { Spinner, Pager } from '../components';
 
 const sortOptions = [
-    { label: 'Name A-Z', value: 'DISPLAY_NAME' },
-    { label: 'Name Z-A', value: 'DISPLAY_NAME_DESC' },
-    { label: 'Email Address A-Z', value: 'EMAIL_ADDRESS' },
+    { label: 'Name A-Z', value: 'NAME_ASC' },
+    { label: 'Name Z-A', value: 'NAME_DESC' },
+    { label: 'Email Address A-Z', value: 'EMAIL_ADDRESS_ASC' },
     { label: 'Email Address Z-A', value: 'EMAIL_ADDRESS_DESC' }
 ];
 
 export const UserPage = () => {
     const [state, setState] = useState({
-        page: 1,
         size: 10,
         search: '',
-        sort: sortOptions[0].value
+        sort: sortOptions[0].value,
+        cursor: undefined
     });
 
     const { loading, data } = useQuery(SEARCH_USERS, {
@@ -43,14 +43,17 @@ export const UserPage = () => {
         return <Spinner />;
     }
 
-    const onSort = value => setState({ ...state, sort: value });
+    const onSort = value =>
+        setState({ ...state, cursor: undefined, sort: value });
 
-    const onPreviousPage = () => setState({ ...state, page: state.page - 1 });
+    const onPreviousPage = () =>
+        setState({ ...state, cursor: data.searchUsers.before });
 
-    const onNextPage = () => setState({ ...state, page: state.page + 1 });
+    const onNextPage = () =>
+        setState({ ...state, cursor: data.searchUsers.after });
 
     const onSubmit = values =>
-        setState({ ...state, page: 1, search: values.search });
+        setState({ ...state, cursor: undefined, search: values.search });
 
     return (
         <Container>
@@ -156,8 +159,8 @@ export const UserPage = () => {
                     ))}
 
                     <Pager
-                        hasNextPage={data.searchUsers.hasNextPage}
-                        hasPreviousPage={data.searchUsers.hasPreviousPage}
+                        hasNextPage={!!data.searchUsers.after}
+                        hasPreviousPage={!!data.searchUsers.before}
                         onNextPage={onNextPage}
                         onPreviousPage={onPreviousPage}
                     />

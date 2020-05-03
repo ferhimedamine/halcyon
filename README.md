@@ -19,8 +19,8 @@ A web application template.
     [https://nodejs.org](https://nodejs.org)
 -   Apollo Server
     [https://www.apollographql.com](https://www.apollographql.com)
--   MongoDB
-    [https://www.mongodb.com](https://www.mongodb.com)
+-   FaunaDB
+    [https://fauna.com](https://fauna.com)
 
 **Hosting**
 
@@ -53,7 +53,7 @@ REACT_APP_SENTRY_DSN=
 REACT_APP_SENTRY_ENVIRONMENT=
 
 # Api Settings
-MONGODB_URI=
+FAUNADB_SECRET=
 
 JWT_SECURITYKEY=
 JWT_ISSUER=

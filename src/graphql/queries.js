@@ -30,12 +30,19 @@ export const GET_PROFILE = gql`
 
 export const SEARCH_USERS = gql`
     query SearchUsers(
-        $page: Int
         $size: Int
         $search: String
         $sort: UserSortExpression
+        $cursor: String
     ) {
-        searchUsers(page: $page, size: $size, search: $search, sort: $sort) {
+        searchUsers(
+            input: {
+                size: $size
+                search: $search
+                sort: $sort
+                cursor: $cursor
+            }
+        ) {
             items {
                 id
                 emailAddress
@@ -46,9 +53,8 @@ export const SEARCH_USERS = gql`
                 picture
                 roles
             }
-            totalCount
-            hasNextPage
-            hasPreviousPage
+            before
+            after
         }
     }
 `;

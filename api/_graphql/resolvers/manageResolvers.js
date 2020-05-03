@@ -41,7 +41,7 @@ module.exports = {
                 user.emailAddress = input.emailAddress;
                 user.firstName = input.firstName;
                 user.lastName = input.lastName;
-                user.dateOfBirth = input.dateOfBirth;
+                user.dateOfBirth = input.dateOfBirth.toISOString();
                 await updateUser(user);
 
                 pubsub.publish('userUpdated', {

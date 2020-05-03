@@ -1,15 +1,14 @@
 const { ApolloServer } = require('apollo-server-micro');
 const { typeDefs, resolvers, context } = require('./_graphql');
-const { mongoPlugin } = require('./_utils/mongo');
 const { loggerPlugin } = require('./_utils/logger');
 
 const server = new ApolloServer({
     typeDefs,
     resolvers,
     context,
+    plugins: [loggerPlugin],
     introspection: true,
-    playground: true,
-    plugins: [loggerPlugin, mongoPlugin]
+    playground: true
 });
 
 const handler = server.createHandler({ path: '/api' });

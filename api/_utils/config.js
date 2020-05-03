@@ -1,5 +1,5 @@
 module.exports = {
-    MONGODB_URI: process.env.MONGODB_URI || 'mongodb://localhost:27017/halcyon',
+    FAUNADB_SECRET: process.env.FAUNADB_SECRET,
     JWT_SECURITYKEY: process.env.JWT_SECURITYKEY || 'change-me',
     JWT_ISSUER: process.env.JWT_ISSUER || 'HalcyonApi',
     JWT_AUDIENCE: process.env.JWT_AUDIENCE || 'HalcyonClient',

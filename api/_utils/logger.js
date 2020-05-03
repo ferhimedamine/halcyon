@@ -16,7 +16,7 @@ module.exports.loggerPlugin = {
     requestDidStart() {
         return {
             didEncounterErrors(requestContext) {
-                Sentry.withScope(scope => {
+                Sentry.withScope(async scope => {
                     scope.setUser(requestContext.context.payload);
 
                     scope.setExtras({
@@ -30,6 +30,8 @@ module.exports.loggerPlugin = {
                     for (const error of requestContext.errors) {
                         Sentry.captureException(error);
                     }
+
+                    await Sentry.flush(2000);
                 });
             }
         };

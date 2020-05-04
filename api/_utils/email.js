@@ -1,5 +1,5 @@
 const nodemailer = require('nodemailer');
-const emailTemplates = require('../_emailTemplates');
+const emailTemplates = require('../_data/emailTemplates');
 const { format } = require('./string');
 const { captureException } = require('./logger');
 const config = require('./config');

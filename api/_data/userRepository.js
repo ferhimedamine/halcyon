@@ -66,9 +66,20 @@ module.exports.searchUsers = async ({ size, search, sort, cursor }) => {
 
     const result = await client.query(
         q.Map(
-            q.Paginate(q.Match(q.Index(name)), {
-                size: Math.min(size, 50)
-            }),
+            q.Paginate(
+                q.Filter(
+                    q.Match(name),
+                    q.Lambda(
+                        fields,
+                        q.ContainsStr(
+                            q.Casefold(q.Var('emailAddress')),
+                            q.Casefold(search)
+                        )
+                    )
+                ), {
+                size
+            }
+            ),
             q.Lambda(fields, q.Get(q.Var('ref')))
         )
     );
@@ -85,25 +96,25 @@ const getIndex = sort => {
         case 'EMAIL_ADDRESS_DESC':
             return {
                 name: 'users_email_address_desc',
-                fields: ['emailAddress', 'ref']
+                fields: ['emailAddress', 'firstName', 'lastName', 'ref']
             };
 
         case 'EMAIL_ADDRESS_ASC':
             return {
                 name: 'users_email_address_asc',
-                fields: ['emailAddress', 'ref']
+                fields: ['emailAddress', 'firstName', 'lastName', 'ref']
             };
 
         case 'NAME_DESC':
             return {
                 name: 'users_name_desc',
-                fields: ['firstName', 'lastName', 'ref']
+                fields: ['firstName', 'lastName', 'emailAddress', 'ref']
             };
 
         default:
             return {
                 name: 'users_name_asc',
-                fields: ['firstName', 'lastName', 'ref']
+                fields: ['firstName', 'lastName', 'emailAddress', 'ref']
             };
     }
 };

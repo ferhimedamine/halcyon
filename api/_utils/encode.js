@@ -1,7 +1,10 @@
-module.exports.base64Encode = obj =>
+module.exports.base64Encode = str =>
+    Buffer.from(str, 'utf8').toString('base64');
+
+module.exports.base64EncodeObj = obj =>
     Buffer.from(JSON.stringify(obj), 'utf8').toString('base64');
 
-module.exports.base64Decode = str => {
+module.exports.base64DecodeObj = str => {
     if (!str) {
         return undefined;
     }

@@ -1,5 +1,5 @@
 const { Client, query: q } = require('faunadb');
-const { base64Encode, base64Decode } = require('../_utils/encode');
+const { base64EncodeObj, base64DecodeObj } = require('../_utils/encode');
 const config = require('../_utils/config');
 
 const client = new Client({ secret: config.FAUNADB_SECRET });
@@ -138,8 +138,9 @@ const getItems = arr => {
 };
 
 const generateCursors = result => ({
-    before: result.before && base64Encode({ before: getItems(result.before) }),
-    after: result.after && base64Encode({ after: getItems(result.after) })
+    before:
+        result.before && base64EncodeObj({ before: getItems(result.before) }),
+    after: result.after && base64EncodeObj({ after: getItems(result.after) })
 });
 
 const parseItems = arr => {
@@ -157,7 +158,7 @@ const parseItems = arr => {
 };
 
 const parseCursor = str => {
-    const decoded = base64Decode(str);
+    const decoded = base64DecodeObj(str);
     if (!decoded) {
         return {
             before: undefined,

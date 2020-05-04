@@ -2,18 +2,15 @@ const { sign, verify } = require('jsonwebtoken');
 const config = require('./config');
 
 module.exports.verifyToken = async token => {
-    let result = undefined;
-
     try {
-        result = verify(token, config.JWT_SECURITYKEY, {
+        return verify(token, config.JWT_SECURITYKEY, {
             issuer: config.JWT_ISSUER,
             audience: config.JWT_AUDIENCE
         });
     } catch (error) {
         // ignore errors
+        return undefined;
     }
-
-    return result;
 };
 
 module.exports.generateToken = user => {

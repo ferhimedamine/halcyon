@@ -157,14 +157,13 @@ const parseItems = arr => {
 };
 
 const parseCursor = str => {
-    if (!str) {
+    const decoded = base64Decode(str);
+    if (!decoded) {
         return {
             before: undefined,
             after: undefined
         };
     }
-
-    const decoded = base64Decode(str);
 
     return {
         before: parseItems(decoded.before),

@@ -44,7 +44,6 @@ export const REGISTER = gql`
                 lastName
                 dateOfBirth
                 isLockedOut
-                picture
                 roles
             }
         }
@@ -148,7 +147,6 @@ export const CREATE_USER = gql`
                 lastName
                 dateOfBirth
                 isLockedOut
-                picture
                 roles
             }
         }

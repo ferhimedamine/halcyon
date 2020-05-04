@@ -22,7 +22,6 @@ module.exports.generateToken = user => {
         email: user.emailAddress,
         given_name: user.firstName,
         family_name: user.lastName,
-        picture: user.picture,
         role: (user.roles || []).join()
     };
 

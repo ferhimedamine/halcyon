@@ -14,10 +14,7 @@ module.exports = {
                 );
             }
 
-            const verified = await verifyHash(
-                input.password,
-                user.password
-            );
+            const verified = await verifyHash(input.password, user.password);
 
             if (!verified) {
                 throw new ApolloError(

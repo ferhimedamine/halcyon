@@ -15,7 +15,6 @@ module.exports = gql`
         lastName: String!
         dateOfBirth: Date!
         isLockedOut: Boolean
-        picture: String
         roles: [String]
     }
 

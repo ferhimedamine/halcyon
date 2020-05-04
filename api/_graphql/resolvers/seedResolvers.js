@@ -3,7 +3,7 @@ const {
     createUser,
     removeUser
 } = require('../../_data/userRepository');
-const { hashPassword } = require('../../_utils/password');
+const { generateHash } = require('../../_utils/hash');
 const config = require('../../_utils/config');
 
 module.exports = {
@@ -26,7 +26,7 @@ module.exports = {
 
             const result = await createUser({
                 emailAddress: config.SEED_EMAILADDRESS,
-                password: await hashPassword(config.SEED_PASSWORD),
+                password: await generateHash(config.SEED_PASSWORD),
                 firstName: 'System',
                 lastName: 'Administrator',
                 dateOfBirth: new Date(1970, 0, 1).toISOString(),

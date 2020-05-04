@@ -6,7 +6,7 @@ const {
     updateUser
 } = require('../../_data/userRepository');
 const { sendEmail } = require('../../_utils/email');
-const { hashPassword } = require('../../_utils/password');
+const { generateHash } = require('../../_utils/hash');
 
 module.exports = {
     Mutation: {
@@ -21,7 +21,7 @@ module.exports = {
 
             const result = await createUser({
                 emailAddress: input.emailAddress,
-                password: await hashPassword(input.password),
+                password: await generateHash(input.password),
                 firstName: input.firstName,
                 lastName: input.lastName,
                 dateOfBirth: input.dateOfBirth.toISOString(),
@@ -69,7 +69,7 @@ module.exports = {
                 throw new ApolloError('Invalid token.', 'INVALID_TOKEN');
             }
 
-            user.password = await hashPassword(newPassword);
+            user.password = await generateHash(newPassword);
             user.passwordResetToken = undefined;
             await updateUser(user);
 

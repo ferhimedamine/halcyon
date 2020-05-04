@@ -9,7 +9,7 @@ const {
     removeUser
 } = require('../../_data/userRepository');
 const { isAuthenticated } = require('../context');
-const { hashPassword } = require('../../_utils/password');
+const { generateHash } = require('../../_utils/hash');
 const { isAuthorized, USER_ADMINISTRATOR } = require('../../_utils/auth');
 
 module.exports = {
@@ -40,7 +40,7 @@ module.exports = {
 
                 const result = await createUser({
                     emailAddress: input.emailAddress,
-                    password: await hashPassword(input.password),
+                    password: await generateHash(input.password),
                     firstName: input.firstName,
                     lastName: input.lastName,
                     dateOfBirth: input.dateOfBirth.toISOString(),

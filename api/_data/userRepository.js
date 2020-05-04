@@ -1,4 +1,5 @@
 const { Client, query: q } = require('faunadb');
+const { base64Encode, base64Decode } = require('../_utils/encode');
 const config = require('../_utils/config');
 
 const client = new Client({ secret: config.FAUNADB_SECRET });
@@ -62,7 +63,8 @@ module.exports.removeUser = async ({ id }) => {
 };
 
 module.exports.searchUsers = async ({ size, search, sort, cursor }) => {
-    const { name, fields } = getIndex(sort);
+    const { name, values } = getIndex(sort);
+    const { before, after } = parseCursor(cursor);
 
     const result = await client.query(
         q.Map(
@@ -70,24 +72,26 @@ module.exports.searchUsers = async ({ size, search, sort, cursor }) => {
                 q.Filter(
                     q.Match(name),
                     q.Lambda(
-                        fields,
+                        values,
                         q.ContainsStr(
                             q.Casefold(q.Var('emailAddress')),
                             q.Casefold(search)
                         )
                     )
-                ), {
-                size
-            }
+                ),
+                {
+                    size,
+                    before,
+                    after
+                }
             ),
-            q.Lambda(fields, q.Get(q.Var('ref')))
+            q.Lambda(values, q.Get(q.Var('ref')))
         )
     );
 
     return {
         items: result.data.map(mapUser),
-        before: undefined,
-        after: undefined
+        ...generateCursors(result)
     };
 };
 
@@ -96,27 +100,76 @@ const getIndex = sort => {
         case 'EMAIL_ADDRESS_DESC':
             return {
                 name: 'users_email_address_desc',
-                fields: ['emailAddress', 'firstName', 'lastName', 'ref']
+                values: ['emailAddress', 'firstName', 'lastName', 'ref']
             };
 
         case 'EMAIL_ADDRESS_ASC':
             return {
                 name: 'users_email_address_asc',
-                fields: ['emailAddress', 'firstName', 'lastName', 'ref']
+                values: ['emailAddress', 'firstName', 'lastName', 'ref']
             };
 
         case 'NAME_DESC':
             return {
                 name: 'users_name_desc',
-                fields: ['firstName', 'lastName', 'emailAddress', 'ref']
+                values: ['firstName', 'lastName', 'emailAddress', 'ref']
             };
 
         default:
             return {
                 name: 'users_name_asc',
-                fields: ['firstName', 'lastName', 'emailAddress', 'ref']
+                values: ['firstName', 'lastName', 'emailAddress', 'ref']
             };
     }
+};
+
+const getItems = arr => {
+    if (!arr) {
+        return undefined;
+    }
+
+    return arr.map(item => {
+        if (!item.collection) {
+            return item;
+        }
+
+        return { collection: item.collection.id, id: item.id };
+    });
+};
+
+const generateCursors = result => ({
+    before: result.before && base64Encode({ before: getItems(result.before) }),
+    after: result.after && base64Encode({ after: getItems(result.after) })
+});
+
+const parseItems = arr => {
+    if (!arr) {
+        return undefined;
+    }
+
+    return arr.map(item => {
+        if (!item.collection) {
+            return item;
+        }
+
+        return q.Ref(q.Collection(item.collection), item.id);
+    });
+};
+
+const parseCursor = str => {
+    if (!str) {
+        return {
+            before: undefined,
+            after: undefined
+        };
+    }
+
+    const decoded = base64Decode(str);
+
+    return {
+        before: parseItems(decoded.before),
+        after: parseItems(decoded.after)
+    };
 };
 
 const mapUser = user => ({ id: user.ref.id, ...user.data });

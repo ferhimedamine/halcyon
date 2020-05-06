@@ -1,4 +1,4 @@
-const fetch = require('node-fetch');
+const fetch = require('node-fetch').default;
 const { URLSearchParams } = require('url');
 const { captureException } = require('./logger');
 

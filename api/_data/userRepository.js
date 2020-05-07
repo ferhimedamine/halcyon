@@ -137,10 +137,9 @@ const getItems = arr => {
     });
 };
 
-const generateCursors = result => ({
-    before:
-        result.before && base64EncodeObj({ before: getItems(result.before) }),
-    after: result.after && base64EncodeObj({ after: getItems(result.after) })
+const generateCursors = ({ before, after }) => ({
+    before: before && base64EncodeObj({ before: getItems(before) }),
+    after: after && base64EncodeObj({ after: getItems(after) })
 });
 
 const parseItems = arr => {

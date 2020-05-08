@@ -8,6 +8,7 @@ const {
 } = require('../../_data/userRepository');
 const { isAuthenticated } = require('../context');
 const { generateHash, verifyHash } = require('../../_utils/hash');
+const { publish } = require('../../_utils/ws');
 
 module.exports = {
     Query: {
@@ -19,7 +20,7 @@ module.exports = {
     Mutation: {
         updateProfile: combineResolvers(
             isAuthenticated(),
-            async (_, { input }, { payload, pubsub }) => {
+            async (_, { input }, { payload }) => {
                 const user = await getUserById(payload.sub);
                 if (!user) {
                     throw new ApolloError('User not found.', 'USER_NOT_FOUND');
@@ -44,7 +45,7 @@ module.exports = {
                 user.dateOfBirth = input.dateOfBirth.toISOString();
                 await updateUser(user);
 
-                pubsub.publish('userUpdated', {
+                publish('userUpdated', {
                     userUpdated: {
                         code: 'USER_UPDATED',
                         user
@@ -91,7 +92,7 @@ module.exports = {
         ),
         deleteAccount: combineResolvers(
             isAuthenticated(),
-            async (_, __, { payload, pubsub }) => {
+            async (_, __, { payload }) => {
                 const user = await getUserById(payload.sub);
                 if (!user) {
                     throw new ApolloError('User not found.', 'USER_NOT_FOUND');
@@ -99,7 +100,7 @@ module.exports = {
 
                 await removeUser(user);
 
-                pubsub.publish('userUpdated', {
+                publish('userUpdated', {
                     userUpdated: {
                         code: 'USER_REMOVED',
                         user

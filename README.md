@@ -6,24 +6,18 @@ A web application template.
 
 ## Technologies
 
-**Client**
-
 -   React
     [https://reactjs.org](https://reactjs.org)
--   Apollo Client
-    [https://www.apollographql.com](https://www.apollographql.com)
-
-**Api**
-
--   Node.js
-    [https://nodejs.org](https://nodejs.org)
--   Apollo Server
+-   Apollo GraphQL
     [https://www.apollographql.com](https://www.apollographql.com)
 -   FaunaDB
     [https://fauna.com](https://fauna.com)
-
-**Hosting**
-
+-   Pusher
+    [https://pusher.com](https://pusher.com)
+-   Mailgun
+    [https://www.mailgun.com](https://www.mailgun.com)
+-   Sentry
+    [https://sentry.io](https://sentry.io)
 -   Vercel
     [https://vercel.com](https://vercel.com)
 
@@ -47,7 +41,8 @@ Create a `.env` file in root directory:
 
 ```
 # Client Settings
-REACT_APP_GRAPHQL_WS=
+REACT_APP_PUSHER_APPKEY=
+REACT_APP_PUSHER_CLUSTER=
 
 REACT_APP_SENTRY_DSN=
 REACT_APP_SENTRY_ENVIRONMENT=
@@ -59,12 +54,17 @@ JWT_SECURITYKEY=
 JWT_ISSUER=
 JWT_AUDIENCE=
 
+SEED_EMAILADDRESS=
+SEED_PASSWORD=
+
 MAILGUN_DOMAIN=
 MAILGUN_APIKEY=
 MAILGUN_NOREPLY=
 
-SEED_EMAILADDRESS=
-SEED_PASSWORD=
+PUSHER_APPKEY=
+PUSHER_APPID=
+PUSHER_SECRET=
+PUSHER_CLUSTER=
 
 SENTRY_DSN=
 SENTRY_ENVIRONMENT=

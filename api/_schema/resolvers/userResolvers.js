@@ -1,4 +1,4 @@
-const { ApolloError, withFilter } = require('apollo-server');
+const { ApolloError } = require('apollo-server');
 const { combineResolvers } = require('graphql-resolvers');
 const {
     searchUsers,
@@ -10,7 +10,8 @@ const {
 } = require('../../_data/userRepository');
 const { isAuthenticated } = require('../context');
 const { generateHash } = require('../../_utils/hash');
-const { isAuthorized, USER_ADMINISTRATOR } = require('../../_utils/auth');
+const { USER_ADMINISTRATOR } = require('../../_utils/auth');
+const { publish } = require('../../_utils/ws');
 
 module.exports = {
     Query: {
@@ -26,7 +27,7 @@ module.exports = {
     Mutation: {
         createUser: combineResolvers(
             isAuthenticated(USER_ADMINISTRATOR),
-            async (_, { input }, { pubsub }) => {
+            async (_, { input }) => {
                 const existing = await getUserByEmailAddress(
                     input.emailAddress
                 );
@@ -48,7 +49,7 @@ module.exports = {
                     roles: input.roles
                 });
 
-                pubsub.publish('userUpdated', {
+                publish('userUpdated', {
                     userUpdated: {
                         code: 'USER_CREATED',
                         user: result
@@ -64,7 +65,7 @@ module.exports = {
         ),
         updateUser: combineResolvers(
             isAuthenticated(USER_ADMINISTRATOR),
-            async (_, { id, input }, { pubsub }) => {
+            async (_, { id, input }) => {
                 const user = await getUserById(id);
                 if (!user) {
                     throw new ApolloError('User not found.', 'USER_NOT_FOUND');
@@ -90,7 +91,7 @@ module.exports = {
                 user.roles = input.roles;
                 await updateUser(user);
 
-                pubsub.publish('userUpdated', {
+                publish('userUpdated', {
                     userUpdated: {
                         code: 'USER_UPDATED',
                         user
@@ -106,7 +107,7 @@ module.exports = {
         ),
         lockUser: combineResolvers(
             isAuthenticated(USER_ADMINISTRATOR),
-            async (_, { id }, { payload, pubsub }) => {
+            async (_, { id }, { payload }) => {
                 const user = await getUserById(id);
                 if (!user) {
                     throw new ApolloError('User not found.', 'USER_NOT_FOUND');
@@ -122,7 +123,7 @@ module.exports = {
                 user.isLockedOut = true;
                 await updateUser(user);
 
-                pubsub.publish('userUpdated', {
+                publish('userUpdated', {
                     userUpdated: {
                         code: 'USER_UPDATED',
                         user
@@ -138,7 +139,7 @@ module.exports = {
         ),
         unlockUser: combineResolvers(
             isAuthenticated(USER_ADMINISTRATOR),
-            async (_, { id }, { pubsub }) => {
+            async (_, { id }) => {
                 const user = await getUserById(id);
                 if (!user) {
                     throw new ApolloError('User not found.', 'USER_NOT_FOUND');
@@ -147,7 +148,7 @@ module.exports = {
                 user.isLockedOut = false;
                 await updateUser(user);
 
-                pubsub.publish('userUpdated', {
+                publish('userUpdated', {
                     userUpdated: {
                         code: 'USER_UPDATED',
                         user
@@ -163,7 +164,7 @@ module.exports = {
         ),
         deleteUser: combineResolvers(
             isAuthenticated(USER_ADMINISTRATOR),
-            async (_, { id }, { payload, pubsub }) => {
+            async (_, { id }, { payload }) => {
                 const user = await getUserById(id);
                 if (!user) {
                     throw new ApolloError('User not found.', 'USER_NOT_FOUND');
@@ -178,7 +179,7 @@ module.exports = {
 
                 await removeUser(user);
 
-                pubsub.publish('userUpdated', {
+                publish('userUpdated', {
                     userUpdated: {
                         code: 'USER_DELETED',
                         user
@@ -192,14 +193,5 @@ module.exports = {
                 };
             }
         )
-    },
-    Subscription: {
-        userUpdated: {
-            subscribe: withFilter(
-                (_, __, { pubsub }) => pubsub.asyncIterator('userUpdated'),
-                (_, __, { payload }) =>
-                    isAuthorized(payload, USER_ADMINISTRATOR)
-            )
-        }
     }
 };

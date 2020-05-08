@@ -4,11 +4,12 @@ const {
     removeUser
 } = require('../../_data/userRepository');
 const { generateHash } = require('../../_utils/hash');
+const { publish } = require('../../_utils/ws');
 const config = require('../../_utils/config');
 
 module.exports = {
     Mutation: {
-        seedData: async (_, __, { pubsub }) => {
+        seedData: async () => {
             const existing = await getUserByEmailAddress(
                 config.SEED_EMAILADDRESS
             );
@@ -16,7 +17,7 @@ module.exports = {
             if (existing) {
                 await removeUser(existing);
 
-                pubsub.publish('userUpdated', {
+                publish('userUpdated', {
                     userUpdated: {
                         code: 'USER_REMOVED',
                         user: existing
@@ -34,7 +35,7 @@ module.exports = {
                 roles: ['System Administrator']
             });
 
-            pubsub.publish('userUpdated', {
+            publish('userUpdated', {
                 userUpdated: {
                     code: 'USER_CREATED',
                     user: result

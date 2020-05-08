@@ -7,10 +7,11 @@ const {
 } = require('../../_data/userRepository');
 const { sendEmail } = require('../../_utils/email');
 const { generateHash } = require('../../_utils/hash');
+const { publish } = require('../../_utils/ws');
 
 module.exports = {
     Mutation: {
-        register: async (_, { input }, { pubsub }) => {
+        register: async (_, { input }) => {
             const existing = await getUserByEmailAddress(input.emailAddress);
             if (existing) {
                 throw new ApolloError(
@@ -29,7 +30,7 @@ module.exports = {
                 roles: []
             });
 
-            pubsub.publish('userUpdated', {
+            publish('userUpdated', {
                 userUpdated: {
                     code: 'USER_CREATED',
                     user: result

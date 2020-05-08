@@ -54,11 +54,6 @@ module.exports = gql`
         user: User
     }
 
-    type UserSubscriptionResponse {
-        code: String
-        user: User
-    }
-
     extend type Query {
         searchUsers(input: SearchUserInput): UserSearchResult
         getUserById(id: ID!): User
@@ -70,9 +65,5 @@ module.exports = gql`
         lockUser(id: ID!): UserMutationResponse
         unlockUser(id: ID!): UserMutationResponse
         deleteUser(id: ID!): UserMutationResponse
-    }
-
-    extend type Subscription {
-        userUpdated: UserSubscriptionResponse
     }
 `;

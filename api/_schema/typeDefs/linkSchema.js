@@ -15,8 +15,4 @@ module.exports = gql`
     type Mutation {
         _: Boolean
     }
-
-    type Subscription {
-        _: Boolean
-    }
 `;

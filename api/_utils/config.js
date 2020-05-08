@@ -8,6 +8,10 @@ module.exports = {
     MAILGUN_NOREPLY: process.env.MAILGUN_NOREPLY || 'noreply@chrispoulter.com',
     SEED_EMAILADDRESS: process.env.SEED_EMAILADDRESS,
     SEED_PASSWORD: process.env.SEED_PASSWORD,
+    PUSHER_APPKEY: process.env.PUSHER_APPKEY,
+    PUSHER_APPID: process.env.PUSHER_APPID,
+    PUSHER_SECRET: process.env.PUSHER_SECRET,
+    PUSHER_CLUSTER: process.env.PUSHER_CLUSTER,
     SENTRY_DSN: process.env.SENTRY_DSN,
     SENTRY_ENVIRONMENT: process.env.SENTRY_ENVIRONMENT
 };

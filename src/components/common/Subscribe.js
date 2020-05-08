@@ -1,15 +1,19 @@
-import { useSubscription } from '@apollo/react-hooks';
+import Pusher from 'pusher-js';
 import { toast } from 'react-toastify';
-import { USER_UPDATED } from '../../graphql';
+import config from '../../utils/config';
 
 export const Subscribe = () => {
-    const { data, loading } = useSubscription(USER_UPDATED);
+    const pusher = new Pusher(config.PUSHER_APPKEY, {
+        cluster: config.PUSHER_CLUSTER
+    });
 
-    if (!loading && data?.userUpdated) {
+    const channel = pusher.subscribe('halcyon-graphql');
+
+    channel.bind('userUpdated', data =>
         toast.info(
             `${data.userUpdated.code} ${data.userUpdated.user.firstName} ${data.userUpdated.user.lastName}`
-        );
-    }
+        )
+    );
 
     return null;
 };

@@ -1,5 +1,5 @@
 const typeDefs = require('./typeDefs');
 const resolvers = require('./resolvers');
-const { context, subscriptions } = require('./context');
+const { context } = require('./context');
 
-module.exports = { typeDefs, resolvers, context, subscriptions };
+module.exports = { typeDefs, resolvers, context };

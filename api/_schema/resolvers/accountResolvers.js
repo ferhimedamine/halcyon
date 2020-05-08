@@ -10,7 +10,7 @@ const { generateHash } = require('../../_utils/hash');
 
 module.exports = {
     Mutation: {
-        register: async (_, { input }, { pubsub }) => {
+        register: async (_, { input }) => {
             const existing = await getUserByEmailAddress(input.emailAddress);
             if (existing) {
                 throw new ApolloError(
@@ -27,13 +27,6 @@ module.exports = {
                 dateOfBirth: input.dateOfBirth.toISOString(),
                 isLockedOut: false,
                 roles: []
-            });
-
-            pubsub.publish('userUpdated', {
-                userUpdated: {
-                    code: 'USER_CREATED',
-                    user: result
-                }
             });
 
             return {

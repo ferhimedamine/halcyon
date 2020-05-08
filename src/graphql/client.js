@@ -1,11 +1,4 @@
-import ApolloClient from 'apollo-client';
-import { split } from 'apollo-link';
-import { HttpLink } from 'apollo-link-http';
-import { WebSocketLink } from 'apollo-link-ws';
-import { setContext } from 'apollo-link-context';
-import { onError } from 'apollo-link-error';
-import { getMainDefinition } from 'apollo-utilities';
-import { InMemoryCache } from 'apollo-cache-inmemory';
+import ApolloClient, { InMemoryCache } from 'apollo-boost';
 import jwtDecode from 'jwt-decode';
 import { toast } from 'react-toastify';
 import { GET_LOCAL_CONTEXT } from './queries';
@@ -15,34 +8,15 @@ import config from '../utils/config';
 
 const cache = new InMemoryCache();
 
-const httpLink = new HttpLink({ uri: config.GRAPHQL_URL });
-
-const wsLink = new WebSocketLink({
-    uri: config.GRAPHQL_WS,
-    options: {
-        reconnect: true,
-        connectionParams: () => ({
+const request = operation => {
+    operation.setContext({
+        headers: {
             authorization: getToken()
-        })
-    }
-});
+        }
+    });
+};
 
-const authLink = setContext(() => ({
-    headers: {
-        authorization: getToken()
-    }
-}));
-
-const link = split(
-    ({ query }) => {
-        const { kind, operation } = getMainDefinition(query);
-        return kind === 'OperationDefinition' && operation === 'subscription';
-    },
-    wsLink,
-    httpLink
-);
-
-const errorLink = onError(({ graphQLErrors, networkError }) => {
+const onError = ({ graphQLErrors, networkError }) => {
     if (graphQLErrors) {
         for (const graphQLError of graphQLErrors || []) {
             switch (graphQLError.extensions.code) {
@@ -74,7 +48,7 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
             'An unknown error has occurred whilst communicating with the server.'
         );
     }
-});
+};
 
 const getToken = () => {
     const { accessToken } = cache.readQuery({ query: GET_LOCAL_CONTEXT });
@@ -117,14 +91,14 @@ const onResetStore = () => {
 
         setUserContext(undefined);
     }
-
-    wsLink.subscriptionClient.close(false, false);
 };
 
 onResetStore();
 
 export const client = new ApolloClient({
-    link: authLink.concat(errorLink).concat(link),
+    uri: config.GRAPHQL_URL,
+    request,
+    onError,
     cache,
     resolvers: {}
 });

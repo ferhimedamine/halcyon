@@ -6,24 +6,16 @@ A web application template.
 
 ## Technologies
 
-**Client**
-
 -   React
     [https://reactjs.org](https://reactjs.org)
--   Apollo Client
-    [https://www.apollographql.com](https://www.apollographql.com)
-
-**Api**
-
--   Node.js
-    [https://nodejs.org](https://nodejs.org)
--   Apollo Server
+-   Apollo GraphQL
     [https://www.apollographql.com](https://www.apollographql.com)
 -   FaunaDB
     [https://fauna.com](https://fauna.com)
-
-**Hosting**
-
+-   Mailgun
+    [https://www.mailgun.com](https://www.mailgun.com)
+-   Sentry
+    [https://sentry.io](https://sentry.io)
 -   Vercel
     [https://vercel.com](https://vercel.com)
 
@@ -47,8 +39,6 @@ Create a `.env` file in root directory:
 
 ```
 # Client Settings
-REACT_APP_GRAPHQL_WS=
-
 REACT_APP_SENTRY_DSN=
 REACT_APP_SENTRY_ENVIRONMENT=
 

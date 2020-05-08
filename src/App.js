@@ -6,7 +6,6 @@ import { client } from './graphql';
 import {
     Header,
     Footer,
-    // Subscribe,
     PublicRoute,
     PrivateRoute,
     ErrorBoundary
@@ -101,7 +100,6 @@ export const App = () => (
                 </Switch>
             </ErrorBoundary>
             <Footer />
-            {/* <Subscribe /> */}
         </BrowserRouter>
 
         <ToastContainer

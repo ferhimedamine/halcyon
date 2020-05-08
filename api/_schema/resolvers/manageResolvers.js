@@ -19,7 +19,7 @@ module.exports = {
     Mutation: {
         updateProfile: combineResolvers(
             isAuthenticated(),
-            async (_, { input }, { payload, pubsub }) => {
+            async (_, { input }, { payload }) => {
                 const user = await getUserById(payload.sub);
                 if (!user) {
                     throw new ApolloError('User not found.', 'USER_NOT_FOUND');
@@ -43,13 +43,6 @@ module.exports = {
                 user.lastName = input.lastName;
                 user.dateOfBirth = input.dateOfBirth.toISOString();
                 await updateUser(user);
-
-                pubsub.publish('userUpdated', {
-                    userUpdated: {
-                        code: 'USER_UPDATED',
-                        user
-                    }
-                });
 
                 return {
                     message: 'Your profile has been updated.',
@@ -91,20 +84,13 @@ module.exports = {
         ),
         deleteAccount: combineResolvers(
             isAuthenticated(),
-            async (_, __, { payload, pubsub }) => {
+            async (_, __, { payload }) => {
                 const user = await getUserById(payload.sub);
                 if (!user) {
                     throw new ApolloError('User not found.', 'USER_NOT_FOUND');
                 }
 
                 await removeUser(user);
-
-                pubsub.publish('userUpdated', {
-                    userUpdated: {
-                        code: 'USER_REMOVED',
-                        user
-                    }
-                });
 
                 return {
                     message: 'Your account has been deleted.',

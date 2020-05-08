@@ -65,6 +65,22 @@ export const removeToken = () => {
     client.resetStore();
 };
 
+export const setSocketId = (setSocketId) => {
+    cache.writeData({
+        data: {
+            setSocketId
+        }
+    });
+};
+
+export const removeSocketId = () => {
+    cache.writeData({
+        data: {
+            setSocketId: null
+        }
+    });
+};
+
 const onResetStore = () => {
     const accessToken = getItem('accessToken');
     if (accessToken) {

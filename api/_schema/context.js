@@ -3,13 +3,10 @@ const { skip } = require('graphql-resolvers');
 const { verifyToken } = require('../_utils/jwt');
 const { isAuthorized } = require('../_utils/auth');
 
-module.exports.context = async ({ req, event, connection }) => {
-    if (connection) {
-        return connection.context;
-    }
-
+module.exports.context = async ({ req, event }) => {
     const headers = (req || event).headers;
     const authHeader = headers.authorization || headers.Authorization || '';
+    const socketId = headers.socket || headers.Socket || '';
 
     const token = authHeader.replace(/bearer /giu, '');
     if (!token) {
@@ -18,7 +15,8 @@ module.exports.context = async ({ req, event, connection }) => {
 
     const payload = await verifyToken(token);
     return {
-        payload
+        payload,
+        socketId
     };
 };
 

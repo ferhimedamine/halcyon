@@ -9,7 +9,7 @@ const config = require('../../_utils/config');
 
 module.exports = {
     Mutation: {
-        seedData: async () => {
+        seedData: async (_, __, { socketId }) => {
             const existing = await getUserByEmailAddress(
                 config.SEED_EMAILADDRESS
             );
@@ -17,11 +17,11 @@ module.exports = {
             if (existing) {
                 await removeUser(existing);
 
-                publish('userUpdated', {
-                    userUpdated: {
-                        code: 'USER_REMOVED',
-                        user: existing
-                    }
+                publish({
+                    channel: 'user',
+                    event: 'USER_REMOVED',
+                    data: existing,
+                    socketId
                 });
             }
 
@@ -35,11 +35,11 @@ module.exports = {
                 roles: ['System Administrator']
             });
 
-            publish('userUpdated', {
-                userUpdated: {
-                    code: 'USER_CREATED',
-                    user: result
-                }
+            publish({
+                channel: 'user',
+                event: 'USER_CREATED',
+                data: result,
+                socketId
             });
 
             return {

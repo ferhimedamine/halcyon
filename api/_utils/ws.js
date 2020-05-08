@@ -8,6 +8,8 @@ const pusher = new Pusher({
     cluster: config.PUSHER_CLUSTER
 });
 
-export const publish = (event, data) => {
-    return pusher.trigger('halcyon-graphql', event, data);
-};
+export const publish = ({ channel, event, data, socketId }) =>
+    pusher.trigger(`private-${channel}`, event, data);
+
+export const authenticate = (socketId, channel) =>
+    pusher.authenticate(socketId, `private-${channel}`);

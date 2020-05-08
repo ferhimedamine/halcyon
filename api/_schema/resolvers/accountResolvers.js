@@ -11,7 +11,7 @@ const { publish } = require('../../_utils/ws');
 
 module.exports = {
     Mutation: {
-        register: async (_, { input }) => {
+        register: async (_, { input }, { socketId }) => {
             const existing = await getUserByEmailAddress(input.emailAddress);
             if (existing) {
                 throw new ApolloError(
@@ -30,11 +30,11 @@ module.exports = {
                 roles: []
             });
 
-            publish('userUpdated', {
-                userUpdated: {
-                    code: 'USER_CREATED',
-                    user: result
-                }
+            publish({
+                channel: 'user',
+                event: 'USER_CREATED',
+                data: result,
+                socketId
             });
 
             return {

@@ -27,7 +27,7 @@ module.exports = {
     Mutation: {
         createUser: combineResolvers(
             isAuthenticated(USER_ADMINISTRATOR),
-            async (_, { input }) => {
+            async (_, { input }, { socketId }) => {
                 const existing = await getUserByEmailAddress(
                     input.emailAddress
                 );
@@ -49,11 +49,11 @@ module.exports = {
                     roles: input.roles
                 });
 
-                publish('userUpdated', {
-                    userUpdated: {
-                        code: 'USER_CREATED',
-                        user: result
-                    }
+                publish({
+                    channel: 'user',
+                    event: 'USER_CREATED',
+                    data: result,
+                    socketId
                 });
 
                 return {
@@ -65,7 +65,7 @@ module.exports = {
         ),
         updateUser: combineResolvers(
             isAuthenticated(USER_ADMINISTRATOR),
-            async (_, { id, input }) => {
+            async (_, { id, input }, { socketId }) => {
                 const user = await getUserById(id);
                 if (!user) {
                     throw new ApolloError('User not found.', 'USER_NOT_FOUND');
@@ -91,11 +91,11 @@ module.exports = {
                 user.roles = input.roles;
                 await updateUser(user);
 
-                publish('userUpdated', {
-                    userUpdated: {
-                        code: 'USER_UPDATED',
-                        user
-                    }
+                publish({
+                    channel: 'user',
+                    event: 'USER_UPDATED',
+                    data: user,
+                    socketId
                 });
 
                 return {
@@ -107,7 +107,7 @@ module.exports = {
         ),
         lockUser: combineResolvers(
             isAuthenticated(USER_ADMINISTRATOR),
-            async (_, { id }, { payload }) => {
+            async (_, { id }, { payload, socketId }) => {
                 const user = await getUserById(id);
                 if (!user) {
                     throw new ApolloError('User not found.', 'USER_NOT_FOUND');
@@ -123,11 +123,11 @@ module.exports = {
                 user.isLockedOut = true;
                 await updateUser(user);
 
-                publish('userUpdated', {
-                    userUpdated: {
-                        code: 'USER_UPDATED',
-                        user
-                    }
+                publish({
+                    channel: 'user',
+                    event: 'USER_UPDATED',
+                    data: user,
+                    socketId
                 });
 
                 return {
@@ -139,7 +139,7 @@ module.exports = {
         ),
         unlockUser: combineResolvers(
             isAuthenticated(USER_ADMINISTRATOR),
-            async (_, { id }) => {
+            async (_, { id }, { socketId }) => {
                 const user = await getUserById(id);
                 if (!user) {
                     throw new ApolloError('User not found.', 'USER_NOT_FOUND');
@@ -148,11 +148,11 @@ module.exports = {
                 user.isLockedOut = false;
                 await updateUser(user);
 
-                publish('userUpdated', {
-                    userUpdated: {
-                        code: 'USER_UPDATED',
-                        user
-                    }
+                publish({
+                    channel: 'user',
+                    event: 'USER_UPDATED',
+                    data: user,
+                    socketId
                 });
 
                 return {
@@ -164,7 +164,7 @@ module.exports = {
         ),
         deleteUser: combineResolvers(
             isAuthenticated(USER_ADMINISTRATOR),
-            async (_, { id }, { payload }) => {
+            async (_, { id }, { payload, socketId }) => {
                 const user = await getUserById(id);
                 if (!user) {
                     throw new ApolloError('User not found.', 'USER_NOT_FOUND');
@@ -179,11 +179,11 @@ module.exports = {
 
                 await removeUser(user);
 
-                publish('userUpdated', {
-                    userUpdated: {
-                        code: 'USER_DELETED',
-                        user
-                    }
+                publish({
+                    channel: 'user',
+                    event: 'USER_DELETED',
+                    data: user,
+                    socketId
                 });
 
                 return {

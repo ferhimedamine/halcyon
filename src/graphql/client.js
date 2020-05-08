@@ -65,7 +65,7 @@ export const removeToken = () => {
     client.resetStore();
 };
 
-export const setSocketId = (setSocketId) => {
+export const setSocketId = setSocketId => {
     cache.writeData({
         data: {
             setSocketId

@@ -11,7 +11,9 @@ const pusher = new Pusher(config.PUSHER_APPKEY, {
 export const Subscribe = () => {
     const channel = pusher.subscribe('private-user');
 
-    pusher.connection.bind('connected', () => setSocketId(pusher.connection.socket_id));
+    pusher.connection.bind('connected', () =>
+        setSocketId(pusher.connection.socket_id)
+    );
 
     pusher.connection.bind('disconnected', () => removeSocketId());
 

@@ -1,5 +1,5 @@
 const { ApolloServer } = require('apollo-server-micro');
-const { typeDefs, resolvers, context } = require('./_graphql');
+const { typeDefs, resolvers, context } = require('./_schema');
 const { loggerPlugin } = require('./_utils/logger');
 
 const server = new ApolloServer({

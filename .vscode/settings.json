@@ -2,6 +2,6 @@
     "files.exclude": {
         "**/node_modules": true,
         "**/build": true,
-        "**/.now": true
+        "**/.vercel": true
     }
 }

@@ -3,3 +3,4 @@ export * from './Footer';
 export * from './Spinner';
 export * from './Pager';
 export * from './ErrorBoundary';
+export * from './Subscribe';

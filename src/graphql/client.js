@@ -9,9 +9,14 @@ import config from '../utils/config';
 const cache = new InMemoryCache();
 
 const request = operation => {
+    const { accessToken, socketId } = cache.readQuery({
+        query: GET_LOCAL_CONTEXT
+    });
+
     operation.setContext({
         headers: {
-            authorization: getToken()
+            authorization: accessToken ? `Bearer ${accessToken}` : '',
+            socket: socketId
         }
     });
 };
@@ -50,11 +55,6 @@ const onError = ({ graphQLErrors, networkError }) => {
     }
 };
 
-const getToken = () => {
-    const { accessToken } = cache.readQuery({ query: GET_LOCAL_CONTEXT });
-    return accessToken ? `Bearer ${accessToken}` : '';
-};
-
 export const setToken = (accessToken, persist) => {
     setItem('accessToken', accessToken, persist);
     client.resetStore();
@@ -65,18 +65,20 @@ export const removeToken = () => {
     client.resetStore();
 };
 
-export const setSocketId = setSocketId => {
+export const setSocketId = socketId => {
+    console.log('Setting socketId', socketId);
     cache.writeData({
         data: {
-            setSocketId
+            socketId
         }
     });
 };
 
 export const removeSocketId = () => {
+    console.log('Removing socketId');
     cache.writeData({
         data: {
-            setSocketId: null
+            socketId: null
         }
     });
 };

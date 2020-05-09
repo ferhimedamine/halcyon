@@ -4,7 +4,7 @@ const {
     removeUser
 } = require('../../_data/userRepository');
 const { generateHash } = require('../../_utils/hash');
-const { publish } = require('../../_utils/ws');
+const { publish } = require('../../_utils/push');
 const config = require('../../_utils/config');
 
 module.exports = {

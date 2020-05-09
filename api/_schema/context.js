@@ -8,9 +8,11 @@ module.exports.context = async ({ req, event }) => {
     const authHeader = headers.authorization || headers.Authorization || '';
     const socketId = headers.socket || headers.Socket || '';
 
+    console.log('Socket Header', socketId);
+
     const token = authHeader.replace(/bearer /giu, '');
     if (!token) {
-        return {};
+        return { socketId };
     }
 
     const payload = await verifyToken(token);

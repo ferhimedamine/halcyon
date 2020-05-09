@@ -8,7 +8,7 @@ const {
 } = require('../../_data/userRepository');
 const { isAuthenticated } = require('../context');
 const { generateHash, verifyHash } = require('../../_utils/hash');
-const { publish } = require('../../_utils/ws');
+const { publish } = require('../../_utils/push');
 
 module.exports = {
     Query: {

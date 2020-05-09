@@ -7,7 +7,7 @@ const {
 } = require('../../_data/userRepository');
 const { sendEmail } = require('../../_utils/email');
 const { generateHash } = require('../../_utils/hash');
-const { publish } = require('../../_utils/ws');
+const { publish } = require('../../_utils/push');
 
 module.exports = {
     Mutation: {

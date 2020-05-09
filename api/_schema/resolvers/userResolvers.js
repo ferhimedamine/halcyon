@@ -11,7 +11,7 @@ const {
 const { isAuthenticated } = require('../context');
 const { generateHash } = require('../../_utils/hash');
 const { USER_ADMINISTRATOR } = require('../../_utils/auth');
-const { publish } = require('../../_utils/ws');
+const { publish } = require('../../_utils/push');
 
 module.exports = {
     Query: {

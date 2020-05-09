@@ -1,14 +1,24 @@
 import Pusher from 'pusher-js';
 import { toast } from 'react-toastify';
-import { setSocketId, removeSocketId } from '../../graphql';
+import { useQuery } from '@apollo/react-hooks';
+import { GET_LOCAL_CONTEXT, setSocketId, removeSocketId } from '../../graphql';
 import config from '../../utils/config';
 
-const pusher = new Pusher(config.PUSHER_APPKEY, {
-    cluster: config.PUSHER_CLUSTER,
-    authEndpoint: '/api/auth'
-});
-
 export const Subscribe = () => {
+    const { data } = useQuery(GET_LOCAL_CONTEXT);
+
+    const pusher = new Pusher(config.PUSHER_APPKEY, {
+        cluster: config.PUSHER_CLUSTER,
+        authEndpoint: '/api/auth',
+        auth: {
+            headers: {
+                authorization: data.accessToken
+                    ? `Bearer ${data.accessToken}`
+                    : ''
+            }
+        }
+    });
+
     const channel = pusher.subscribe('private-user');
 
     pusher.connection.bind('connected', () =>

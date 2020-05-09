@@ -1,9 +1,8 @@
 import React from 'react';
 import { BrowserRouter, Switch } from 'react-router-dom';
-import { ApolloProvider } from '@apollo/react-hooks';
 import { ToastContainer, Slide } from 'react-toastify';
-import { client } from './graphql';
 import {
+    AuthProvider,
     Header,
     Footer,
     PublicRoute,
@@ -27,7 +26,7 @@ import {
 import { USER_ADMINISTRATOR } from './utils/auth';
 
 export const App = () => (
-    <ApolloProvider client={client}>
+    <AuthProvider>
         <BrowserRouter>
             <Header />
             <ErrorBoundary>
@@ -108,5 +107,5 @@ export const App = () => (
             draggable={false}
             transition={Slide}
         />
-    </ApolloProvider>
+    </AuthProvider>
 );

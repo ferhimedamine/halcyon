@@ -1,10 +1,9 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
-import { useQuery } from '@apollo/react-hooks';
-import { GET_LOCAL_CONTEXT } from '../../graphql';
 import { isAuthorized } from '../../utils/auth';
 import { Container, Jumbotron, Button } from 'reactstrap';
+import { AuthContext } from '../providers/AuthProvider';
 import { PublicRoute } from './PublicRoute';
 
 export const PrivateRoute = ({
@@ -12,13 +11,13 @@ export const PrivateRoute = ({
     requiredRoles,
     ...rest
 }) => {
-    const { data } = useQuery(GET_LOCAL_CONTEXT);
+    const { currentUser } = useContext(AuthContext);
 
-    if (!isAuthorized(data?.currentUser)) {
+    if (!isAuthorized(currentUser)) {
         return <Redirect to="/login" />;
     }
 
-    if (!isAuthorized(data?.currentUser, requiredRoles)) {
+    if (!isAuthorized(currentUser, requiredRoles)) {
         return (
             <PublicRoute
                 title="Access Denied"

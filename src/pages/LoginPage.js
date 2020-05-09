@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { useMutation } from '@apollo/react-hooks';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { Container, FormGroup } from 'reactstrap';
-import { setToken, GENERATE_TOKEN } from '../graphql';
+import { GENERATE_TOKEN } from '../graphql';
 import { captureException } from '../utils/logger';
-import { TextInput, CheckboxInput, Button } from '../components';
+import { TextInput, CheckboxInput, Button, AuthContext } from '../components';
 
 const initialValues = {
     emailAddress: '',
@@ -20,6 +20,8 @@ const validationSchema = Yup.object().shape({
 });
 
 export const LoginPage = ({ history }) => {
+    const { setToken } = useContext(AuthContext);
+
     const [generateToken] = useMutation(GENERATE_TOKEN, {
         variables: { grantType: 'PASSWORD' }
     });
@@ -27,10 +29,12 @@ export const LoginPage = ({ history }) => {
     const onSubmit = async variables => {
         try {
             const result = await generateToken({ variables });
+
             setToken(
                 result.data.generateToken.accessToken,
                 variables.rememberMe
             );
+
             history.push('/');
         } catch (error) {
             captureException(error);

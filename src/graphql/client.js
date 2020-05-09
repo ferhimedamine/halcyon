@@ -9,9 +9,11 @@ import config from '../utils/config';
 const cache = new InMemoryCache();
 
 const request = operation => {
+    const { accessToken } = cache.readQuery({ query: GET_LOCAL_CONTEXT });
+
     operation.setContext({
         headers: {
-            authorization: getToken()
+            authorization: accessToken ? `Bearer ${accessToken}` : ''
         }
     });
 };
@@ -48,11 +50,6 @@ const onError = ({ graphQLErrors, networkError }) => {
             'An unknown error has occurred whilst communicating with the server.'
         );
     }
-};
-
-const getToken = () => {
-    const { accessToken } = cache.readQuery({ query: GET_LOCAL_CONTEXT });
-    return accessToken ? `Bearer ${accessToken}` : '';
 };
 
 export const setToken = (accessToken, persist) => {

@@ -1,10 +1,10 @@
 import React, { useContext } from 'react';
 import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
-import { isAuthorized } from '../../utils/auth';
 import { Container, Jumbotron, Button } from 'reactstrap';
 import { AuthContext } from '../providers/AuthProvider';
 import { PublicRoute } from './PublicRoute';
+import { isAuthorized } from '../../utils/auth';
 
 export const PrivateRoute = ({
     component: PrivateComponent,

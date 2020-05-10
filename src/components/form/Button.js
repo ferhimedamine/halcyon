@@ -1,9 +1,9 @@
 import React from 'react';
-import { Button as ReactstrapButton, Spinner } from 'reactstrap';
+import { Button as BaseButton, Spinner } from 'reactstrap';
 
 export const Button = ({ loading, disabled, children, ...rest }) => {
     return (
-        <ReactstrapButton disabled={loading || disabled} {...rest}>
+        <BaseButton disabled={loading || disabled} {...rest}>
             {loading ? (
                 <>
                     <Spinner type="grow" size="sm" />
@@ -13,6 +13,6 @@ export const Button = ({ loading, disabled, children, ...rest }) => {
             ) : (
                 children
             )}
-        </ReactstrapButton>
+        </BaseButton>
     );
 };

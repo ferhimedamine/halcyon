@@ -5,8 +5,8 @@ import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { Container, FormGroup } from 'reactstrap';
 import { REGISTER, GENERATE_TOKEN } from '../graphql';
-import { captureException } from '../utils/logger';
 import { TextInput, DateInput, Button, AuthContext } from '../components';
+import { captureException } from '../utils/logger';
 
 const initialValues = {
     emailAddress: '',

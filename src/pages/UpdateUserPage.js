@@ -13,8 +13,6 @@ import {
     UNLOCK_USER,
     DELETE_USER
 } from '../graphql';
-import { AVAILABLE_ROLES } from '../utils/auth';
-import { captureException } from '../utils/logger';
 import {
     Spinner,
     TextInput,
@@ -22,6 +20,8 @@ import {
     CheckboxGroupInput,
     Button
 } from '../components';
+import { AVAILABLE_ROLES } from '../utils/auth';
+import { captureException } from '../utils/logger';
 
 const validationSchema = Yup.object().shape({
     emailAddress: Yup.string()

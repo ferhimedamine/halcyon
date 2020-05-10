@@ -6,8 +6,8 @@ import * as Yup from 'yup';
 import { Container, Alert, FormGroup } from 'reactstrap';
 import { toast } from 'react-toastify';
 import { GET_PROFILE, UPDATE_PROFILE } from '../graphql';
-import { captureException } from '../utils/logger';
 import { Spinner, TextInput, DateInput, Button } from '../components';
+import { captureException } from '../utils/logger';
 
 const validationSchema = Yup.object().shape({
     emailAddress: Yup.string()

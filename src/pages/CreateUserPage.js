@@ -6,14 +6,14 @@ import * as Yup from 'yup';
 import { Container, FormGroup } from 'reactstrap';
 import { toast } from 'react-toastify';
 import { CREATE_USER } from '../graphql';
-import { AVAILABLE_ROLES } from '../utils/auth';
-import { captureException } from '../utils/logger';
 import {
     TextInput,
     DateInput,
     CheckboxGroupInput,
     Button
 } from '../components';
+import { AVAILABLE_ROLES } from '../utils/auth';
+import { captureException } from '../utils/logger';
 
 const initialValues = {
     emailAddress: '',

@@ -1,9 +1,9 @@
 import React from 'react';
 import { BrowserRouter, Switch } from 'react-router-dom';
-import { ApolloProvider } from '@apollo/react-hooks';
 import { ToastContainer, Slide } from 'react-toastify';
-import { client } from './graphql';
 import {
+    AuthProvider,
+    ApolloProvider,
     Header,
     Footer,
     PublicRoute,
@@ -27,86 +27,88 @@ import {
 import { USER_ADMINISTRATOR } from './utils/auth';
 
 export const App = () => (
-    <ApolloProvider client={client}>
-        <BrowserRouter>
-            <Header />
-            <ErrorBoundary>
-                <Switch>
-                    <PublicRoute path="/" component={HomePage} exact />
-                    <PublicRoute
-                        title="Register"
-                        path="/register"
-                        component={RegisterPage}
-                        exact
-                    />
-                    <PublicRoute
-                        title="Login"
-                        path="/login"
-                        component={LoginPage}
-                        exact
-                    />
-                    <PublicRoute
-                        title="Forgot Password"
-                        path="/forgot-password"
-                        component={ForgotPasswordPage}
-                        exact
-                    />
-                    <PublicRoute
-                        title="Reset Password"
-                        path="/reset-password/:token"
-                        component={ResetPasswordPage}
-                        exact
-                    />
-                    <PrivateRoute
-                        title="My Account"
-                        path="/my-account"
-                        component={MyAccountPage}
-                        exact
-                    />
-                    <PrivateRoute
-                        title="Update Profile"
-                        path="/update-profile"
-                        component={UpdateProfilePage}
-                        exact
-                    />
-                    <PrivateRoute
-                        title="Change Password"
-                        path="/change-password"
-                        component={ChangePasswordPage}
-                        exact
-                    />
-                    <PrivateRoute
-                        title="Users"
-                        path="/user"
-                        requiredRoles={USER_ADMINISTRATOR}
-                        component={UserPage}
-                        exact
-                    />
-                    <PrivateRoute
-                        title="Create User"
-                        path="/user/create"
-                        requiredRoles={USER_ADMINISTRATOR}
-                        component={CreateUserPage}
-                        exact
-                    />
-                    <PrivateRoute
-                        title="Update User"
-                        path="/user/:id"
-                        requiredRoles={USER_ADMINISTRATOR}
-                        component={UpdateUserPage}
-                        exact
-                    />
-                    <PublicRoute component={NotFoundPage} exact />
-                </Switch>
-            </ErrorBoundary>
-            <Footer />
-        </BrowserRouter>
+    <AuthProvider>
+        <ApolloProvider>
+            <BrowserRouter>
+                <Header />
+                <ErrorBoundary>
+                    <Switch>
+                        <PublicRoute path="/" component={HomePage} exact />
+                        <PublicRoute
+                            title="Register"
+                            path="/register"
+                            component={RegisterPage}
+                            exact
+                        />
+                        <PublicRoute
+                            title="Login"
+                            path="/login"
+                            component={LoginPage}
+                            exact
+                        />
+                        <PublicRoute
+                            title="Forgot Password"
+                            path="/forgot-password"
+                            component={ForgotPasswordPage}
+                            exact
+                        />
+                        <PublicRoute
+                            title="Reset Password"
+                            path="/reset-password/:token"
+                            component={ResetPasswordPage}
+                            exact
+                        />
+                        <PrivateRoute
+                            title="My Account"
+                            path="/my-account"
+                            component={MyAccountPage}
+                            exact
+                        />
+                        <PrivateRoute
+                            title="Update Profile"
+                            path="/update-profile"
+                            component={UpdateProfilePage}
+                            exact
+                        />
+                        <PrivateRoute
+                            title="Change Password"
+                            path="/change-password"
+                            component={ChangePasswordPage}
+                            exact
+                        />
+                        <PrivateRoute
+                            title="Users"
+                            path="/user"
+                            requiredRoles={USER_ADMINISTRATOR}
+                            component={UserPage}
+                            exact
+                        />
+                        <PrivateRoute
+                            title="Create User"
+                            path="/user/create"
+                            requiredRoles={USER_ADMINISTRATOR}
+                            component={CreateUserPage}
+                            exact
+                        />
+                        <PrivateRoute
+                            title="Update User"
+                            path="/user/:id"
+                            requiredRoles={USER_ADMINISTRATOR}
+                            component={UpdateUserPage}
+                            exact
+                        />
+                        <PublicRoute component={NotFoundPage} exact />
+                    </Switch>
+                </ErrorBoundary>
+                <Footer />
+            </BrowserRouter>
 
-        <ToastContainer
-            position="bottom-right"
-            hideProgressBar
-            draggable={false}
-            transition={Slide}
-        />
-    </ApolloProvider>
+            <ToastContainer
+                position="bottom-right"
+                hideProgressBar
+                draggable={false}
+                transition={Slide}
+            />
+        </ApolloProvider>
+    </AuthProvider>
 );

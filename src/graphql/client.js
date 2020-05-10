@@ -43,9 +43,7 @@ const onError = ({ graphQLErrors, networkError }) => {
                     break;
             }
         }
-    }
-
-    if (networkError) {
+    } else if (networkError) {
         toast.error(
             'An unknown error has occurred whilst communicating with the server.'
         );

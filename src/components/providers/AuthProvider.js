@@ -14,9 +14,12 @@ const getInitialState = () => {
         };
     }
 
+    const currentUser = jwtDecode(accessToken);
+    setUserContext(currentUser);
+
     return {
         accessToken,
-        currentUser: jwtDecode(accessToken)
+        currentUser
     };
 };
 
@@ -26,10 +29,9 @@ export const AuthProvider = ({ children }) => {
     const [state, setState] = useState(initialState);
 
     const setToken = (accessToken, persist) => {
-        const currentUser = jwtDecode(accessToken);
-
         setItem('accessToken', accessToken, persist);
 
+        const currentUser = jwtDecode(accessToken);
         setUserContext(currentUser);
 
         setState({

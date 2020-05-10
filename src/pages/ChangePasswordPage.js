@@ -6,8 +6,8 @@ import * as Yup from 'yup';
 import { Container, FormGroup } from 'reactstrap';
 import { toast } from 'react-toastify';
 import { CHANGE_PASSWORD } from '../graphql';
-import { captureException } from '../utils/logger';
 import { TextInput, Button } from '../components';
+import { captureException } from '../utils/logger';
 
 const initialValues = {
     currentPassword: '',

@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { useMutation } from '@apollo/react-hooks';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { Container, FormGroup } from 'reactstrap';
-import { setToken, REGISTER, GENERATE_TOKEN } from '../graphql';
+import { REGISTER, GENERATE_TOKEN } from '../graphql';
+import { TextInput, DateInput, Button, AuthContext } from '../components';
 import { captureException } from '../utils/logger';
-import { TextInput, DateInput, Button } from '../components';
 
 const initialValues = {
     emailAddress: '',
@@ -37,6 +37,8 @@ const validationSchema = Yup.object().shape({
 });
 
 export const RegisterPage = ({ history }) => {
+    const { setToken } = useContext(AuthContext);
+
     const [register] = useMutation(REGISTER);
 
     const [generateToken] = useMutation(GENERATE_TOKEN, {

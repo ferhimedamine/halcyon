@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { useQuery } from '@apollo/react-hooks';
 import {
     Collapse,
     Navbar,
@@ -15,21 +14,23 @@ import {
     DropdownItem,
     Container
 } from 'reactstrap';
-import { removeToken, GET_LOCAL_CONTEXT } from '../../graphql';
+import { AuthContext } from '../providers/AuthProvider';
 import { isAuthorized, USER_ADMINISTRATOR } from '../../utils/auth';
 
 export const Header = () => {
     const history = useHistory();
+
+    const { currentUser, removeToken } = useContext(AuthContext);
+
     const [isOpen, setIsOpen] = useState(false);
-    const { data } = useQuery(GET_LOCAL_CONTEXT);
 
     useEffect(() => {
         const listen = history.listen(() => setIsOpen(false));
         return () => listen();
     }, [history]);
 
-    const isAuthenticated = isAuthorized(data?.currentUser);
-    const isUserAdmin = isAuthorized(data?.currentUser, USER_ADMINISTRATOR);
+    const isAuthenticated = isAuthorized(currentUser);
+    const isUserAdmin = isAuthorized(currentUser, USER_ADMINISTRATOR);
 
     const logout = () => {
         removeToken();
@@ -61,8 +62,8 @@ export const Header = () => {
                             {isAuthenticated ? (
                                 <UncontrolledDropdown nav inNavbar>
                                     <DropdownToggle nav caret>
-                                        {data.currentUser.given_name}{' '}
-                                        {data.currentUser.family_name}{' '}
+                                        {currentUser.given_name}{' '}
+                                        {currentUser.family_name}{' '}
                                     </DropdownToggle>
                                     <DropdownMenu right>
                                         <DropdownItem

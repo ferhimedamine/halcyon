@@ -50,7 +50,7 @@ module.exports = {
                 });
 
                 publish({
-                    channel: 'user',
+                    channel: 'private-user',
                     event: 'USER_CREATED',
                     data: result,
                     socketId
@@ -92,7 +92,7 @@ module.exports = {
                 await updateUser(user);
 
                 publish({
-                    channel: 'user',
+                    channel: 'private-user',
                     event: 'USER_UPDATED',
                     data: user,
                     socketId
@@ -124,7 +124,7 @@ module.exports = {
                 await updateUser(user);
 
                 publish({
-                    channel: 'user',
+                    channel: 'private-user',
                     event: 'USER_UPDATED',
                     data: user,
                     socketId
@@ -149,7 +149,7 @@ module.exports = {
                 await updateUser(user);
 
                 publish({
-                    channel: 'user',
+                    channel: 'private-user',
                     event: 'USER_UPDATED',
                     data: user,
                     socketId
@@ -180,7 +180,7 @@ module.exports = {
                 await removeUser(user);
 
                 publish({
-                    channel: 'user',
+                    channel: 'private-user',
                     event: 'USER_DELETED',
                     data: user,
                     socketId

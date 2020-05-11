@@ -31,7 +31,7 @@ module.exports = {
             });
 
             publish({
-                channel: 'user',
+                channel: 'private-user',
                 event: 'USER_CREATED',
                 data: result,
                 socketId

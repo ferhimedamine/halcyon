@@ -6,10 +6,10 @@ import {
     ApolloProvider,
     Header,
     Footer,
-    Subscribe,
     PublicRoute,
     PrivateRoute,
-    ErrorBoundary
+    ErrorBoundary,
+    Subscribe
 } from './components';
 import {
     HomePage,
@@ -103,6 +103,8 @@ export const App = () => (
                 </ErrorBoundary>
                 <Footer />
             </BrowserRouter>
+
+            <Subscribe />
 
             <ToastContainer
                 position="bottom-right"

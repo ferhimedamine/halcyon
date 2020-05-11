@@ -35,6 +35,7 @@ export const AuthProvider = ({ children }) => {
         setUserContext(currentUser);
 
         setState({
+            ...state,
             accessToken,
             currentUser
         });
@@ -46,13 +47,23 @@ export const AuthProvider = ({ children }) => {
         setUserContext(undefined);
 
         setState({
+            ...state,
             accessToken: undefined,
             currentUser: undefined
         });
     };
 
+    const setSocketId = socketId => {
+        setState({
+            ...state,
+            socketId
+        });
+    };
+
     return (
-        <AuthContext.Provider value={{ ...state, setToken, removeToken }}>
+        <AuthContext.Provider
+            value={{ ...state, setToken, removeToken, setSocketId }}
+        >
             {children}
         </AuthContext.Provider>
     );

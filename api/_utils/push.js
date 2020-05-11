@@ -9,7 +9,7 @@ const pusher = new Pusher({
 });
 
 export const publish = ({ channel, event, data, socketId }) =>
-    pusher.trigger(`private-${channel}`, event, data);
+    pusher.trigger(channel, event, data);
 
 export const authenticate = (socketId, channel, user) =>
-    pusher.authenticate(socketId, `private-${channel}`, user);
+    pusher.authenticate(socketId, channel, user);

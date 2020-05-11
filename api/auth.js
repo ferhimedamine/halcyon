@@ -1,4 +1,4 @@
-const { authenticate } = require('./_utils/pushsh');
+const { authenticate } = require('./_utils/push');
 const { verifyToken } = require('./_utils/jwt');
 
 module.exports = async (req, res) => {

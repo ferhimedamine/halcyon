@@ -6,7 +6,7 @@ import { AuthContext } from './AuthProvider';
 import config from '../../utils/config';
 
 export const ApolloProvider = ({ children }) => {
-    const { accessToken, removeToken } = useContext(AuthContext);
+    const { accessToken, socketId, removeToken } = useContext(AuthContext);
 
     const client = new ApolloClient({
         uri: config.GRAPHQL_URL,
@@ -14,7 +14,10 @@ export const ApolloProvider = ({ children }) => {
         request: operation =>
             operation.setContext({
                 headers: {
-                    authorization: accessToken ? `Bearer ${accessToken}` : ''
+                    authorization: accessToken
+                        ? `Bearer ${accessToken}`
+                        : undefined,
+                    socket: socketId
                 }
             }),
         onError: ({ graphQLErrors, networkError }) => {

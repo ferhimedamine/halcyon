@@ -1,43 +1,51 @@
+import { useContext, useEffect } from 'react';
 import Pusher from 'pusher-js';
 import { toast } from 'react-toastify';
-import { useQuery } from '@apollo/react-hooks';
-import { GET_LOCAL_CONTEXT, setSocketId, removeSocketId } from '../../graphql';
+import { AuthContext } from '../providers/AuthProvider';
 import config from '../../utils/config';
 
 export const Subscribe = () => {
-    const { data } = useQuery(GET_LOCAL_CONTEXT);
+    const { accessToken, setSocketId } = useContext(AuthContext);
 
-    const pusher = new Pusher(config.PUSHER_APPKEY, {
-        cluster: config.PUSHER_CLUSTER,
-        authEndpoint: '/api/auth',
-        auth: {
-            headers: {
-                authorization: data.accessToken
-                    ? `Bearer ${data.accessToken}`
-                    : ''
+    useEffect(() => {
+        console.log('accessToken Changed');
+
+        const pusher = new Pusher(config.PUSHER_APPKEY, {
+            cluster: config.PUSHER_CLUSTER,
+            authEndpoint: '/api/auth',
+            auth: {
+                headers: {
+                    authorization: accessToken
+                        ? `Bearer ${accessToken}`
+                        : undefined
+                }
             }
-        }
-    });
+        });
 
-    const channel = pusher.subscribe('private-user');
+        const channel = pusher.subscribe('private-user');
 
-    pusher.connection.bind('connected', () =>
-        setSocketId(pusher.connection.socket_id)
-    );
+        pusher.connection.bind('connected', () => {
+            console.log('connected');
+            setSocketId(pusher.connection.socket_id);
+        });
 
-    pusher.connection.bind('disconnected', () => removeSocketId());
+        pusher.connection.bind('disconnected', () => {
+            console.log('disconnected');
+            setSocketId(undefined);
+        });
 
-    channel.bind('USER_CREATED', data =>
-        toast.info(`USER_CREATED ${data.firstName} ${data.lastName}`)
-    );
+        channel.bind('USER_CREATED', data =>
+            toast.info(`USER_CREATED ${data.firstName} ${data.lastName}`)
+        );
 
-    channel.bind('USER_UPDATED', data =>
-        toast.info(`USER_UPDATED ${data.firstName} ${data.lastName}`)
-    );
+        channel.bind('USER_UPDATED', data =>
+            toast.info(`USER_UPDATED ${data.firstName} ${data.lastName}`)
+        );
 
-    channel.bind('USER_REMOVED', data =>
-        toast.info(`USER_UPDATED ${data.firstName} ${data.lastName}`)
-    );
+        channel.bind('USER_REMOVED', data =>
+            toast.info(`USER_UPDATED ${data.firstName} ${data.lastName}`)
+        );
+    }, [accessToken]);
 
     return null;
 };

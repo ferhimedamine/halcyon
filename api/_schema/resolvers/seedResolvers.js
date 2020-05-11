@@ -18,7 +18,7 @@ module.exports = {
                 await removeUser(existing);
 
                 publish({
-                    channel: 'user',
+                    channel: 'private-user',
                     event: 'USER_REMOVED',
                     data: existing,
                     socketId
@@ -36,7 +36,7 @@ module.exports = {
             });
 
             publish({
-                channel: 'user',
+                channel: 'private-user',
                 event: 'USER_CREATED',
                 data: result,
                 socketId

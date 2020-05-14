@@ -5,6 +5,8 @@ import { AuthContext } from '../providers/AuthProvider';
 import config from '../../utils/config';
 
 export const Subscribe = () => {
+    console.log('Subscribe Render');
+
     const { accessToken, setSocketId } = useContext(AuthContext);
 
     useEffect(() => {

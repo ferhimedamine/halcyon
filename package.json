@@ -9,7 +9,7 @@
         "workbox": "workbox injectManifest workbox-config.js",
         "fauna": "node scripts/fauna.js",
         "lint": "eslint \"**/*.{js,jsx}\"",
-        "format": "prettier --write \"**/*.{js,jsx,json,css,md,yml,html}\""
+        "format": "prettier --write \"**/*.{js,jsx,json,scss,md,yml,html}\""
     },
     "dependencies": {
         "@apollo/react-hooks": "3.1.5",

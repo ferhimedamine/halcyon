@@ -1,11 +1,10 @@
 import React from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { useQuery, useMutation } from '@apollo/react-hooks';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { Container, Alert, FormGroup } from 'reactstrap';
 import { toast } from 'react-toastify';
-import { GET_PROFILE, UPDATE_PROFILE } from '../graphql';
+import { useGetProfileQuery, useUpdateProfileMutation } from '../graphql';
 import { Spinner, TextInput, DateInput, Button } from '../components';
 import { captureException } from '../utils/logger';
 
@@ -25,9 +24,9 @@ type UpdateProfileFormProps = Yup.InferType<typeof validationSchema>;
 export const UpdateProfilePage: React.FC<RouteComponentProps> = ({
     history
 }) => {
-    const { loading, data } = useQuery(GET_PROFILE);
+    const { loading, data } = useGetProfileQuery();
 
-    const [updateProfile] = useMutation(UPDATE_PROFILE);
+    const [updateProfile] = useUpdateProfileMutation();
 
     if (loading) {
         return <Spinner />;
@@ -44,7 +43,7 @@ export const UpdateProfilePage: React.FC<RouteComponentProps> = ({
     const onSubmit = async (variables: UpdateProfileFormProps) => {
         try {
             const result = await updateProfile({ variables });
-            toast.success(result.data.updateProfile.message);
+            toast.success(result.data!.updateProfile!.message);
             history.push('/my-account');
         } catch (error) {
             captureException(error);

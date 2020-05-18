@@ -1,10 +1,13 @@
 import React, { useContext } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { useMutation } from '@apollo/react-hooks';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { Container, FormGroup } from 'reactstrap';
-import { REGISTER, GENERATE_TOKEN } from '../graphql';
+import {
+    useRegisterMutation,
+    useGenerateTokenMutation,
+    GrantType
+} from '../graphql';
 import { TextInput, DateInput, Button, AuthContext } from '../components';
 import { captureException } from '../utils/logger';
 
@@ -41,19 +44,19 @@ const initialValues: RegisterFormValues = {
 export const RegisterPage: React.FC<RouteComponentProps> = ({ history }) => {
     const { setToken } = useContext(AuthContext);
 
-    const [register] = useMutation(REGISTER);
+    const [register] = useRegisterMutation();
 
-    const [generateToken] = useMutation(GENERATE_TOKEN);
+    const [generateToken] = useGenerateTokenMutation();
 
     const onSubmit = async (variables: RegisterFormValues) => {
         try {
             await register({ variables });
 
             const result = await generateToken({
-                variables: { grantType: 'PASSWORD', ...variables }
+                variables: { grantType: GrantType.Password, ...variables }
             });
 
-            setToken(result.data.generateToken.accessToken);
+            setToken(result.data!.generateToken!.accessToken);
             history.push('/');
         } catch (error) {
             captureException(error);

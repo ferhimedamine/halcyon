@@ -1,17 +1,16 @@
 import React from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { useQuery, useMutation } from '@apollo/react-hooks';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { Container, Alert, FormGroup } from 'reactstrap';
 import confirm from 'reactstrap-confirm';
 import { toast } from 'react-toastify';
 import {
-    GET_USER_BY_ID,
-    UPDATE_USER,
-    LOCK_USER,
-    UNLOCK_USER,
-    DELETE_USER
+    useGetUserByIdQuery,
+    useUpdateUserMutation,
+    useLockUserMutation,
+    useUnlockUserMutation,
+    useDeleteUserMutation
 } from '../graphql';
 import {
     Spinner,
@@ -44,17 +43,17 @@ type UpdateUserFormValues = Yup.InferType<typeof validationSchema>;
 export const UpdateUserPage: React.FC<RouteComponentProps<
     UpdateUserPageParams
 >> = ({ history, match }) => {
-    const { loading, data } = useQuery(GET_USER_BY_ID, {
+    const { loading, data } = useGetUserByIdQuery({
         variables: { id: match.params.id }
     });
 
-    const [updateUser] = useMutation(UPDATE_USER);
+    const [updateUser] = useUpdateUserMutation();
 
-    const [lockUser, { loading: isLocking }] = useMutation(LOCK_USER);
+    const [lockUser, { loading: isLocking }] = useLockUserMutation();
 
-    const [unlockUser, { loading: isUnlocking }] = useMutation(UNLOCK_USER);
+    const [unlockUser, { loading: isUnlocking }] = useUnlockUserMutation();
 
-    const [deleteUser, { loading: isDeleting }] = useMutation(DELETE_USER);
+    const [deleteUser, { loading: isDeleting }] = useDeleteUserMutation();
 
     if (loading) {
         return <Spinner />;
@@ -73,7 +72,7 @@ export const UpdateUserPage: React.FC<RouteComponentProps<
             const result = await updateUser({
                 variables: { id: match.params.id, ...variables }
             });
-            toast.success(result.data.updateUser.message);
+            toast.success(result.data!.updateUser!.message);
             history.push('/user');
         } catch (error) {
             captureException(error);
@@ -87,7 +86,8 @@ export const UpdateUserPage: React.FC<RouteComponentProps<
                 <>
                     Are you sure you want to lock{' '}
                     <strong>
-                        {data.getUserById.firstName} {data.getUserById.lastName}
+                        {data.getUserById!.firstName}{' '}
+                        {data.getUserById!.lastName}
                     </strong>
                     ?
                 </>
@@ -100,7 +100,7 @@ export const UpdateUserPage: React.FC<RouteComponentProps<
         }
 
         const result = await lockUser({ variables: { id: match.params.id } });
-        toast.success(result.data.lockUser.message);
+        toast.success(result.data!.lockUser!.message);
     };
 
     const onUnlockUser = async () => {
@@ -110,7 +110,8 @@ export const UpdateUserPage: React.FC<RouteComponentProps<
                 <>
                     Are you sure you want to unlock{' '}
                     <strong>
-                        {data.getUserById.firstName} {data.getUserById.lastName}
+                        {data.getUserById!.firstName}{' '}
+                        {data.getUserById!.lastName}
                     </strong>
                     ?
                 </>
@@ -123,7 +124,7 @@ export const UpdateUserPage: React.FC<RouteComponentProps<
         }
 
         const result = await unlockUser({ variables: { id: match.params.id } });
-        toast.success(result.data.unlockUser.message);
+        toast.success(result.data!.unlockUser!.message);
     };
 
     const onDeleteUser = async () => {
@@ -133,7 +134,8 @@ export const UpdateUserPage: React.FC<RouteComponentProps<
                 <>
                     Are you sure you want to delete{' '}
                     <strong>
-                        {data.getUserById.firstName} {data.getUserById.lastName}
+                        {data.getUserById!.firstName}{' '}
+                        {data.getUserById!.lastName}
                     </strong>
                     ?
                 </>
@@ -146,7 +148,7 @@ export const UpdateUserPage: React.FC<RouteComponentProps<
         }
 
         const result = await deleteUser({ variables: { id: match.params.id } });
-        toast.success(result.data.deleteUser.message);
+        toast.success(result.data!.deleteUser!.message);
         history.push('/user');
     };
 
@@ -213,7 +215,7 @@ export const UpdateUserPage: React.FC<RouteComponentProps<
                             <Button to="/user" className="mr-1" tag={Link}>
                                 Cancel
                             </Button>
-                            {data.getUserById.isLockedOut ? (
+                            {data.getUserById!.isLockedOut ? (
                                 <Button
                                     color="warning"
                                     className="mr-1"

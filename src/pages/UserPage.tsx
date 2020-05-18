@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useQuery } from '@apollo/react-hooks';
 import { Formik, Form } from 'formik';
 import {
     Container,
@@ -17,20 +16,20 @@ import {
     Card,
     Badge
 } from 'reactstrap';
-import { SEARCH_USERS } from '../graphql';
+import { useSearchUsersQuery, UserSortExpression } from '../graphql';
 import { Spinner, Pager } from '../components';
 
 const sortOptions = [
-    { label: 'Name A-Z', value: 'NAME_ASC' },
-    { label: 'Name Z-A', value: 'NAME_DESC' },
-    { label: 'Email Address A-Z', value: 'EMAIL_ADDRESS_ASC' },
-    { label: 'Email Address Z-A', value: 'EMAIL_ADDRESS_DESC' }
+    { label: 'Name A-Z', value: UserSortExpression.NameAsc },
+    { label: 'Name Z-A', value: UserSortExpression.NameDesc },
+    { label: 'Email Address A-Z', value: UserSortExpression.EmailAddressAsc },
+    { label: 'Email Address Z-A', value: UserSortExpression.EmailAddressDesc }
 ];
 
 export interface UserPageState {
     size: number;
     search: string;
-    sort?: string;
+    sort?: UserSortExpression;
     cursor?: string;
 }
 
@@ -46,7 +45,7 @@ export const UserPage: React.FC = () => {
         cursor: undefined
     });
 
-    const { loading, data } = useQuery(SEARCH_USERS, {
+    const { loading, data } = useSearchUsersQuery({
         variables: state
     });
 
@@ -54,14 +53,14 @@ export const UserPage: React.FC = () => {
         return <Spinner />;
     }
 
-    const onSort = (value: string) =>
+    const onSort = (value: UserSortExpression) =>
         setState({ ...state, cursor: undefined, sort: value });
 
     const onPreviousPage = () =>
-        setState({ ...state, cursor: data.searchUsers.before });
+        setState({ ...state, cursor: data!.searchUsers!.before });
 
     const onNextPage = () =>
-        setState({ ...state, cursor: data.searchUsers.after });
+        setState({ ...state, cursor: data!.searchUsers!.after });
 
     const onSubmit = (values: UserFormValues) =>
         setState({ ...state, cursor: undefined, search: values.search });
@@ -129,7 +128,7 @@ export const UserPage: React.FC = () => {
                 )}
             </Formik>
 
-            {!data?.searchUsers.items.length ? (
+            {!data?.searchUsers?.items?.length ? (
                 <Alert color="info" className="container p-3 mb-3">
                     No users could be found.
                 </Alert>

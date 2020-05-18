@@ -1,0 +1,16 @@
+mutation GenerateToken(
+    $grantType: GrantType!
+    $emailAddress: String!
+    $password: String!
+) {
+    generateToken(
+        input: {
+            grantType: $grantType
+            emailAddress: $emailAddress
+            password: $password
+        }
+    ) {
+        accessToken
+        expiresIn
+    }
+}

@@ -1,0 +1,11 @@
+query GetProfile {
+    getProfile {
+        id
+        emailAddress
+        firstName
+        lastName
+        dateOfBirth
+        isLockedOut
+        roles
+    }
+}

@@ -1,11 +1,10 @@
 import React from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { useMutation } from '@apollo/react-hooks';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { Container, FormGroup } from 'reactstrap';
 import { toast } from 'react-toastify';
-import { CHANGE_PASSWORD } from '../graphql';
+import { useChangePasswordMutation } from '../graphql';
 import { TextInput, Button } from '../components';
 import { captureException } from '../utils/logger';
 
@@ -32,12 +31,12 @@ const initialValues: ChangePasswordFormValues = {
 export const ChangePasswordPage: React.FC<RouteComponentProps> = ({
     history
 }) => {
-    const [changePassword] = useMutation(CHANGE_PASSWORD);
+    const [changePassword] = useChangePasswordMutation();
 
     const onSubmit = async (variables: ChangePasswordFormValues) => {
         try {
             const result = await changePassword({ variables });
-            toast.success(result.data.changePassword.message);
+            toast.success(result.data!.changePassword!.message);
             history.push('/my-account');
         } catch (error) {
             captureException(error);

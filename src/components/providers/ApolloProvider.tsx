@@ -20,7 +20,7 @@ export const ApolloProvider: React.FC = ({ children }) => {
         },
         onError: ({ graphQLErrors, networkError }) => {
             if (graphQLErrors) {
-                for (const graphQLError of graphQLErrors || []) {
+                for (const graphQLError of graphQLErrors) {
                     switch (graphQLError.extensions?.code) {
                         case 'BAD_USER_INPUT':
                             toast.error(graphQLError.message);

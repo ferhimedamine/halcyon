@@ -1,17 +1,16 @@
 import React, { useContext } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { useMutation } from '@apollo/react-hooks';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { Container, FormGroup } from 'reactstrap';
-import { GENERATE_TOKEN } from '../graphql';
+import { useGenerateTokenMutation, GrantType } from '../graphql';
 import { TextInput, CheckboxInput, Button, AuthContext } from '../components';
 import { captureException } from '../utils/logger';
 
 const validationSchema = Yup.object().shape({
     emailAddress: Yup.string().label('Email Address').email().required(),
     password: Yup.string().label('Password').required(),
-    rememberMe: Yup.bool().label('Remember Me').notRequired()
+    rememberMe: Yup.bool().label('Remember Me').required()
 });
 
 type LoginFormValues = Yup.InferType<typeof validationSchema>;
@@ -25,19 +24,19 @@ const initialValues: LoginFormValues = {
 export const LoginPage: React.FC<RouteComponentProps> = ({ history }) => {
     const { setToken } = useContext(AuthContext);
 
-    const [generateToken] = useMutation(GENERATE_TOKEN);
+    const [generateToken] = useGenerateTokenMutation();
 
     const onSubmit = async (variables: LoginFormValues) => {
         try {
             const result = await generateToken({
                 variables: {
-                    grantType: 'PASSWORD',
+                    grantType: GrantType.Password,
                     ...variables
                 }
             });
 
             setToken(
-                result.data.generateToken.accessToken,
+                result.data!.generateToken!.accessToken,
                 variables.rememberMe
             );
 

@@ -6,7 +6,7 @@ module.exports = gql`
         password: String!
         firstName: String!
         lastName: String!
-        dateOfBirth: Date!
+        dateOfBirth: DateTime!
     }
 
     extend type Mutation {

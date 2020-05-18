@@ -1,21 +1,18 @@
 import React, { useContext } from 'react';
 import moment from 'moment';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { useQuery, useMutation } from '@apollo/react-hooks';
 import { Container, Alert } from 'reactstrap';
 import confirm from 'reactstrap-confirm';
 import { toast } from 'react-toastify';
-import { GET_PROFILE, DELETE_ACCOUNT } from '../graphql';
+import { useGetProfileQuery, useDeleteAccountMutation } from '../graphql';
 import { Button, Spinner, AuthContext } from '../components';
 
 export const MyAccountPage: React.FC<RouteComponentProps> = ({ history }) => {
     const { removeToken } = useContext(AuthContext);
 
-    const { loading, data } = useQuery(GET_PROFILE);
+    const { loading, data } = useGetProfileQuery();
 
-    const [deleteAccount, { loading: isDeleting }] = useMutation(
-        DELETE_ACCOUNT
-    );
+    const [deleteAccount, { loading: isDeleting }] = useDeleteAccountMutation();
 
     if (loading) {
         return <Spinner />;
@@ -41,7 +38,7 @@ export const MyAccountPage: React.FC<RouteComponentProps> = ({ history }) => {
         }
 
         const result = await deleteAccount();
-        toast.success(result.data.deleteAccount.message);
+        toast.success(result.data!.deleteAccount!.message);
         removeToken();
         history.push('/');
     };

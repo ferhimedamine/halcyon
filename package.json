@@ -8,8 +8,9 @@
         "postbuild": "yarn workbox && yarn fauna",
         "workbox": "workbox injectManifest workbox-config.js",
         "fauna": "node scripts/fauna.js",
-        "lint": "eslint \"**/*.{js,jsx}\"",
-        "format": "prettier --write \"**/*.{ts,tsx,json,scss,md,yml,html}\""
+        "codegen": "graphql-codegen --config codegen.yml",
+        "lint": "eslint \"**/*.{ts,tsx}\"",
+        "format": "prettier --write \"**/*.{ts,tsx,json,scss,md,yml,html,gql}\""
     },
     "dependencies": {
         "@apollo/react-hooks": "3.1.5",
@@ -39,6 +40,10 @@
         "yup": "0.28.4"
     },
     "devDependencies": {
+        "@graphql-codegen/cli": "1.13.5",
+        "@graphql-codegen/typescript": "1.13.5",
+        "@graphql-codegen/typescript-operations": "1.13.5",
+        "@graphql-codegen/typescript-react-apollo": "1.13.5",
         "@types/jwt-decode": "2.2.1",
         "@types/react": "16.9.35",
         "@types/react-dom": "16.9.8",

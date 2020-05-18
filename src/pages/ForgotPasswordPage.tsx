@@ -1,10 +1,9 @@
 import React from 'react';
-import { useMutation } from '@apollo/react-hooks';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { Container, FormGroup } from 'reactstrap';
 import { toast } from 'react-toastify';
-import { FORGOT_PASSWORD } from '../graphql';
+import { useForgotPasswordMutation } from '../graphql';
 import { TextInput, Button } from '../components';
 import { captureException } from '../utils/logger';
 import { RouteComponentProps } from 'react-router-dom';
@@ -22,12 +21,12 @@ const initialValues: ForgotPasswordFormValues = {
 export const ForgotPasswordPage: React.FC<RouteComponentProps> = ({
     history
 }) => {
-    const [forgotPassword] = useMutation(FORGOT_PASSWORD);
+    const [forgotPassword] = useForgotPasswordMutation();
 
     const onSubmit = async (variables: ForgotPasswordFormValues) => {
         try {
             const result = await forgotPassword({ variables });
-            toast.success(result.data.forgotPassword.message);
+            toast.success(result.data!.forgotPassword!.message);
             history.push('/login');
         } catch (error) {
             captureException(error);

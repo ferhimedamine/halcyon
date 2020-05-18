@@ -1,11 +1,10 @@
 import React from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { useMutation } from '@apollo/react-hooks';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { Container, FormGroup } from 'reactstrap';
 import { toast } from 'react-toastify';
-import { CREATE_USER } from '../graphql';
+import { useCreateUserMutation } from '../graphql';
 import {
     TextInput,
     DateInput,
@@ -48,12 +47,12 @@ const initialValues: CreateUserFormValues = {
 };
 
 export const CreateUserPage: React.FC<RouteComponentProps> = ({ history }) => {
-    const [createUser] = useMutation(CREATE_USER);
+    const [createUser] = useCreateUserMutation();
 
     const onSubmit = async (variables: CreateUserFormValues) => {
         try {
             const result = await createUser({ variables });
-            toast.success(result.data.createUser.message);
+            toast.success(result.data!.createUser!.message);
             history.push('/user');
         } catch (error) {
             captureException(error);

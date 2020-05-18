@@ -13,13 +13,13 @@ module.exports = gql`
         emailAddress: String!
         firstName: String!
         lastName: String!
-        dateOfBirth: Date!
+        dateOfBirth: DateTime!
         isLockedOut: Boolean
-        roles: [String]
+        roles: [String!]
     }
 
     type UserSearchResult {
-        items: [User]
+        items: [User!]
         before: String
         after: String
     }
@@ -36,16 +36,16 @@ module.exports = gql`
         password: String!
         firstName: String!
         lastName: String!
-        dateOfBirth: Date!
-        roles: [String]
+        dateOfBirth: DateTime!
+        roles: [String!]
     }
 
     input UpdateUserInput {
         emailAddress: String!
         firstName: String!
         lastName: String!
-        dateOfBirth: Date!
-        roles: [String]
+        dateOfBirth: DateTime!
+        roles: [String!]
     }
 
     type UserMutationResponse {

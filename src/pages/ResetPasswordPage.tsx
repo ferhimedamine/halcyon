@@ -1,10 +1,9 @@
 import React from 'react';
-import { useMutation } from '@apollo/react-hooks';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { Container, FormGroup } from 'reactstrap';
 import { toast } from 'react-toastify';
-import { RESET_PASSWORD } from '../graphql';
+import { useResetPasswordMutation } from '../graphql';
 import { TextInput, Button } from '../components';
 import { captureException } from '../utils/logger';
 import { RouteComponentProps } from 'react-router-dom';
@@ -36,7 +35,7 @@ const initialValues: ResetPasswordFormValues = {
 export const ResetPasswordPage: React.FC<RouteComponentProps<
     ResetPasswordPageParams
 >> = ({ match, history }) => {
-    const [resetPassword] = useMutation(RESET_PASSWORD);
+    const [resetPassword] = useResetPasswordMutation();
 
     const onSubmit = async (variables: ResetPasswordFormValues) => {
         try {
@@ -44,7 +43,7 @@ export const ResetPasswordPage: React.FC<RouteComponentProps<
                 variables: { token: match.params.token, ...variables }
             });
 
-            toast.success(result.data.resetPassword.message);
+            toast.success(result.data!.resetPassword!.message);
             history.push('/login');
         } catch (error) {
             captureException(error);

@@ -1,4 +1,9 @@
-import { DecodedToken } from '../components';
+export interface DecodedToken {
+    sub: string;
+    given_name: string;
+    family_name: string;
+    role: string | string[];
+}
 
 export const AVAILABLE_ROLES = ['System Administrator', 'User Administrator'];
 

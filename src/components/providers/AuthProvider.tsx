@@ -1,14 +1,8 @@
 import React, { useState } from 'react';
 import jwtDecode from 'jwt-decode';
 import { getItem, setItem, removeItem } from '../../utils/storage';
+import { DecodedToken } from '../../utils/auth';
 import { setUserContext } from '../../utils/logger';
-
-export interface DecodedToken {
-    sub: string;
-    given_name: string;
-    family_name: string;
-    role: string | string[];
-}
 
 export interface AuthProviderState {
     accessToken?: string;

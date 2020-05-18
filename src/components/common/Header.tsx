@@ -17,7 +17,7 @@ import {
 import { AuthContext } from '../providers/AuthProvider';
 import { isAuthorized, USER_ADMINISTRATOR } from '../../utils/auth';
 
-export const Header = () => {
+export const Header: React.FC = () => {
     const history = useHistory();
 
     const { currentUser, removeToken } = useContext(AuthContext);
@@ -29,7 +29,6 @@ export const Header = () => {
         return () => listen();
     }, [history]);
 
-    const isAuthenticated = isAuthorized(currentUser);
     const isUserAdmin = isAuthorized(currentUser, USER_ADMINISTRATOR);
 
     const logout = () => {
@@ -59,7 +58,7 @@ export const Header = () => {
                         </Nav>
 
                         <Nav navbar className="ml-auto">
-                            {isAuthenticated ? (
+                            {currentUser ? (
                                 <UncontrolledDropdown nav inNavbar>
                                     <DropdownToggle nav caret>
                                         {currentUser.given_name}{' '}

@@ -3,7 +3,7 @@ import { Container } from 'reactstrap';
 
 const currentYear = new Date().getFullYear();
 
-export const Footer = () => (
+export const Footer: React.FC = () => (
     <footer>
         <Container className="pt-3">
             <hr />

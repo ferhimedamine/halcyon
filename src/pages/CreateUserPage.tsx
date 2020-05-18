@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import { useMutation } from '@apollo/react-hooks';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
@@ -14,16 +14,6 @@ import {
 } from '../components';
 import { AVAILABLE_ROLES } from '../utils/auth';
 import { captureException } from '../utils/logger';
-
-const initialValues = {
-    emailAddress: '',
-    password: '',
-    confirmPassword: '',
-    firstName: '',
-    lastName: '',
-    dateOfBirth: '',
-    roles: []
-};
 
 const validationSchema = Yup.object().shape({
     emailAddress: Yup.string()
@@ -41,13 +31,26 @@ const validationSchema = Yup.object().shape({
         ),
     firstName: Yup.string().label('First Name').max(50).required(),
     lastName: Yup.string().label('Last Name').max(50).required(),
-    dateOfBirth: Yup.string().label('Date of Birth').required()
+    dateOfBirth: Yup.string().label('Date of Birth').required(),
+    roles: Yup.array(Yup.string()).label('Roles').notRequired()
 });
 
-export const CreateUserPage = ({ history }) => {
+type CreateUserFormValues = Yup.InferType<typeof validationSchema>;
+
+const initialValues: CreateUserFormValues = {
+    emailAddress: '',
+    password: '',
+    confirmPassword: '',
+    firstName: '',
+    lastName: '',
+    dateOfBirth: '',
+    roles: []
+};
+
+export const CreateUserPage: React.FC<RouteComponentProps> = ({ history }) => {
     const [createUser] = useMutation(CREATE_USER);
 
-    const onSubmit = async variables => {
+    const onSubmit = async (variables: CreateUserFormValues) => {
         try {
             const result = await createUser({ variables });
             toast.success(result.data.createUser.message);
@@ -66,7 +69,7 @@ export const CreateUserPage = ({ history }) => {
             </h1>
             <hr />
 
-            <Formik
+            <Formik<CreateUserFormValues>
                 initialValues={initialValues}
                 validationSchema={validationSchema}
                 onSubmit={onSubmit}

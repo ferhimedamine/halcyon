@@ -1,7 +1,16 @@
 import React from 'react';
+import { FieldProps } from 'formik';
 import { Input, FormGroup, FormText, Label } from 'reactstrap';
 
-export const CheckboxInput = ({ field, form, label }) => {
+export interface CheckboxInputProps extends FieldProps {
+    label: string;
+}
+
+export const CheckboxInput: React.FC<CheckboxInputProps> = ({
+    field,
+    form,
+    label
+}) => {
     const { name, value } = field;
     const { errors, touched } = form;
     const error = errors[name];

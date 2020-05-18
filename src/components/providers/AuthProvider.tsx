@@ -3,9 +3,31 @@ import jwtDecode from 'jwt-decode';
 import { getItem, setItem, removeItem } from '../../utils/storage';
 import { setUserContext } from '../../utils/logger';
 
-export const AuthContext = React.createContext({});
+export interface DecodedToken {
+    sub: string;
+    given_name: string;
+    family_name: string;
+    role: string | string[];
+}
 
-const getInitialState = () => {
+export interface AuthProviderState {
+    accessToken?: string;
+    currentUser?: DecodedToken;
+}
+
+export interface AuthContext extends AuthProviderState {
+    setToken: (token: string, persist?: boolean) => void;
+    removeToken: () => void;
+}
+
+export const AuthContext = React.createContext<AuthContext>({
+    accessToken: undefined,
+    currentUser: undefined,
+    setToken: () => {},
+    removeToken: () => {}
+});
+
+const getInitialState = (): AuthProviderState => {
     const accessToken = getItem('accessToken');
     if (!accessToken) {
         return {
@@ -14,7 +36,7 @@ const getInitialState = () => {
         };
     }
 
-    const currentUser = jwtDecode(accessToken);
+    const currentUser = jwtDecode<DecodedToken>(accessToken);
     setUserContext(currentUser);
 
     return {
@@ -23,15 +45,15 @@ const getInitialState = () => {
     };
 };
 
-export const AuthProvider = ({ children }) => {
+export const AuthProvider: React.FC = ({ children }) => {
     const initialState = getInitialState();
 
-    const [state, setState] = useState(initialState);
+    const [state, setState] = useState<AuthProviderState>(initialState);
 
-    const setToken = (accessToken, persist) => {
+    const setToken = (accessToken: string, persist?: boolean) => {
         setItem('accessToken', accessToken, persist);
 
-        const currentUser = jwtDecode(accessToken);
+        const currentUser = jwtDecode<DecodedToken>(accessToken);
         setUserContext(currentUser);
 
         setState({
@@ -43,7 +65,7 @@ export const AuthProvider = ({ children }) => {
     const removeToken = () => {
         removeItem('accessToken');
 
-        setUserContext(undefined);
+        setUserContext(null);
 
         setState({
             accessToken: undefined,

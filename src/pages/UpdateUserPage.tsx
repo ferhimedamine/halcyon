@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
@@ -23,6 +23,10 @@ import {
 import { AVAILABLE_ROLES } from '../utils/auth';
 import { captureException } from '../utils/logger';
 
+export interface UpdateUserPageParams {
+    id: string;
+}
+
 const validationSchema = Yup.object().shape({
     emailAddress: Yup.string()
         .label('Email Address')
@@ -31,29 +35,26 @@ const validationSchema = Yup.object().shape({
         .required(),
     firstName: Yup.string().label('First Name').max(50).required(),
     lastName: Yup.string().label('Last Name').max(50).required(),
-    dateOfBirth: Yup.string().label('Date of Birth').required()
+    dateOfBirth: Yup.string().label('Date of Birth').required(),
+    roles: Yup.array(Yup.string()).label('Roles').notRequired()
 });
 
-export const UpdateUserPage = ({ history, match }) => {
+type UpdateUserFormValues = Yup.InferType<typeof validationSchema>;
+
+export const UpdateUserPage: React.FC<RouteComponentProps<
+    UpdateUserPageParams
+>> = ({ history, match }) => {
     const { loading, data } = useQuery(GET_USER_BY_ID, {
         variables: { id: match.params.id }
     });
 
-    const [updateUser] = useMutation(UPDATE_USER, {
-        variables: { id: match.params.id }
-    });
+    const [updateUser] = useMutation(UPDATE_USER);
 
-    const [lockUser, { loading: isLocking }] = useMutation(LOCK_USER, {
-        variables: { id: match.params.id }
-    });
+    const [lockUser, { loading: isLocking }] = useMutation(LOCK_USER);
 
-    const [unlockUser, { loading: isUnlocking }] = useMutation(UNLOCK_USER, {
-        variables: { id: match.params.id }
-    });
+    const [unlockUser, { loading: isUnlocking }] = useMutation(UNLOCK_USER);
 
-    const [deleteUser, { loading: isDeleting }] = useMutation(DELETE_USER, {
-        variables: { id: match.params.id }
-    });
+    const [deleteUser, { loading: isDeleting }] = useMutation(DELETE_USER);
 
     if (loading) {
         return <Spinner />;
@@ -67,9 +68,11 @@ export const UpdateUserPage = ({ history, match }) => {
         );
     }
 
-    const onSubmit = async variables => {
+    const onSubmit = async (variables: UpdateUserFormValues) => {
         try {
-            const result = await updateUser({ variables });
+            const result = await updateUser({
+                variables: { id: match.params.id, ...variables }
+            });
             toast.success(result.data.updateUser.message);
             history.push('/user');
         } catch (error) {
@@ -96,7 +99,7 @@ export const UpdateUserPage = ({ history, match }) => {
             return;
         }
 
-        const result = await lockUser();
+        const result = await lockUser({ variables: { id: match.params.id } });
         toast.success(result.data.lockUser.message);
     };
 
@@ -119,7 +122,7 @@ export const UpdateUserPage = ({ history, match }) => {
             return;
         }
 
-        const result = await unlockUser();
+        const result = await unlockUser({ variables: { id: match.params.id } });
         toast.success(result.data.unlockUser.message);
     };
 
@@ -142,7 +145,7 @@ export const UpdateUserPage = ({ history, match }) => {
             return;
         }
 
-        const result = await deleteUser();
+        const result = await deleteUser({ variables: { id: match.params.id } });
         toast.success(result.data.deleteUser.message);
         history.push('/user');
     };
@@ -156,8 +159,7 @@ export const UpdateUserPage = ({ history, match }) => {
             </h1>
             <hr />
 
-            <Formik
-                enableReinitialize={true}
+            <Formik<UpdateUserFormValues>
                 initialValues={data.getUserById}
                 validationSchema={validationSchema}
                 onSubmit={onSubmit}

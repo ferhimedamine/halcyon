@@ -27,8 +27,19 @@ const sortOptions = [
     { label: 'Email Address Z-A', value: 'EMAIL_ADDRESS_DESC' }
 ];
 
-export const UserPage = () => {
-    const [state, setState] = useState({
+export interface UserPageState {
+    size: number;
+    search: string;
+    sort?: string;
+    cursor?: string;
+}
+
+export interface UserFormValues {
+    search: string;
+}
+
+export const UserPage: React.FC = () => {
+    const [state, setState] = useState<UserPageState>({
         size: 10,
         search: '',
         sort: sortOptions[0].value,
@@ -43,7 +54,7 @@ export const UserPage = () => {
         return <Spinner />;
     }
 
-    const onSort = value =>
+    const onSort = (value: string) =>
         setState({ ...state, cursor: undefined, sort: value });
 
     const onPreviousPage = () =>
@@ -52,7 +63,7 @@ export const UserPage = () => {
     const onNextPage = () =>
         setState({ ...state, cursor: data.searchUsers.after });
 
-    const onSubmit = values =>
+    const onSubmit = (values: UserFormValues) =>
         setState({ ...state, cursor: undefined, search: values.search });
 
     return (
@@ -70,7 +81,7 @@ export const UserPage = () => {
             </div>
             <hr />
 
-            <Formik
+            <Formik<UserFormValues>
                 onSubmit={onSubmit}
                 initialValues={{ search: state.search }}
             >
@@ -124,7 +135,7 @@ export const UserPage = () => {
                 </Alert>
             ) : (
                 <>
-                    {data.searchUsers.items?.map(user => (
+                    {data.searchUsers.items?.map((user: any) => (
                         <Card
                             key={user.id}
                             to={`/user/${user.id}`}
@@ -145,7 +156,7 @@ export const UserPage = () => {
                                         Locked
                                     </Badge>
                                 )}
-                                {user.roles.map(role => (
+                                {user.roles.map((role: any) => (
                                     <Badge
                                         key={role}
                                         color="primary"

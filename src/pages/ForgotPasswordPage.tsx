@@ -7,19 +7,24 @@ import { toast } from 'react-toastify';
 import { FORGOT_PASSWORD } from '../graphql';
 import { TextInput, Button } from '../components';
 import { captureException } from '../utils/logger';
-
-const initialValues = {
-    emailAddress: ''
-};
+import { RouteComponentProps } from 'react-router-dom';
 
 const validationSchema = Yup.object().shape({
     emailAddress: Yup.string().label('Email Address').email().required()
 });
 
-export const ForgotPasswordPage = ({ history }) => {
+type ForgotPasswordFormValues = Yup.InferType<typeof validationSchema>;
+
+const initialValues: ForgotPasswordFormValues = {
+    emailAddress: ''
+};
+
+export const ForgotPasswordPage: React.FC<RouteComponentProps> = ({
+    history
+}) => {
     const [forgotPassword] = useMutation(FORGOT_PASSWORD);
 
-    const onSubmit = async variables => {
+    const onSubmit = async (variables: ForgotPasswordFormValues) => {
         try {
             const result = await forgotPassword({ variables });
             toast.success(result.data.forgotPassword.message);
@@ -34,7 +39,7 @@ export const ForgotPasswordPage = ({ history }) => {
             <h1>Forgotten Password</h1>
             <hr />
 
-            <Formik
+            <Formik<ForgotPasswordFormValues>
                 initialValues={initialValues}
                 validationSchema={validationSchema}
                 onSubmit={onSubmit}

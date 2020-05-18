@@ -1,14 +1,25 @@
 import React from 'react';
+import { FieldProps } from 'formik';
 import { FormGroup, Label, FormText, Input } from 'reactstrap';
 
-export const CheckboxGroupInput = ({ field, form, label, options }) => {
+export interface CheckboxGroupInputProps extends FieldProps {
+    label: string;
+    options: string[];
+}
+
+export const CheckboxGroupInput: React.FC<CheckboxGroupInputProps> = ({
+    field,
+    form,
+    label,
+    options
+}) => {
     const { name, onChange, onBlur, value } = field;
     const { errors, touched } = form;
     const error = errors[name];
     const touch = touched[name];
     const values = value || [];
 
-    const handleChange = (option, checked) => {
+    const handleChange = (option: string, checked: boolean) => {
         const value = [...values];
         const index = values.indexOf(option);
 
@@ -45,7 +56,9 @@ export const CheckboxGroupInput = ({ field, form, label, options }) => {
                             id={`${name}.${option}`}
                             name={`${name}.${option}`}
                             type="checkbox"
-                            checked={!!values.find(item => item === option)}
+                            checked={
+                                !!values.find((item: any) => item === option)
+                            }
                             invalid={!!touch && !!error}
                             onChange={event =>
                                 handleChange(option, event.target.checked)

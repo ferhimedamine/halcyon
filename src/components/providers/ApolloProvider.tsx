@@ -5,22 +5,23 @@ import { toast } from 'react-toastify';
 import { AuthContext } from './AuthProvider';
 import config from '../../utils/config';
 
-export const ApolloProvider = ({ children }) => {
+export const ApolloProvider: React.FC = ({ children }) => {
     const { accessToken, removeToken } = useContext(AuthContext);
 
     const client = new ApolloClient({
         uri: config.GRAPHQL_URL,
         resolvers: {},
-        request: operation =>
+        request: operation => {
             operation.setContext({
                 headers: {
                     authorization: accessToken ? `Bearer ${accessToken}` : ''
                 }
-            }),
+            });
+        },
         onError: ({ graphQLErrors, networkError }) => {
             if (graphQLErrors) {
                 for (const graphQLError of graphQLErrors || []) {
-                    switch (graphQLError.extensions.code) {
+                    switch (graphQLError.extensions?.code) {
                         case 'BAD_USER_INPUT':
                             toast.error(graphQLError.message);
                             break;

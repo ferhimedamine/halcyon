@@ -1,17 +1,28 @@
 import React, { useState } from 'react';
 import moment from 'moment';
+import { FieldProps } from 'formik';
 import { FormGroup, Label, FormText, Input } from 'reactstrap';
 
 const months = moment.months();
 const currentYear = moment().year();
 
-export const DateInput = ({ field, form, label }) => {
+export interface DateInputProps extends FieldProps {
+    label: string;
+}
+
+export interface DateInputState {
+    year: number;
+    month: number;
+    date: number;
+}
+
+export const DateInput: React.FC<DateInputProps> = ({ field, form, label }) => {
     const { name, onChange, onBlur, value } = field;
     const { errors, touched } = form;
     const error = errors[name];
     const touch = touched[name];
 
-    const dateValue = {
+    const initialState = {
         year: -1,
         month: -1,
         date: -1
@@ -19,23 +30,23 @@ export const DateInput = ({ field, form, label }) => {
 
     if (value) {
         const date = moment(value);
-        dateValue.year = date.year();
-        dateValue.month = date.month();
-        dateValue.date = date.date();
+        initialState.year = date.year();
+        initialState.month = date.month();
+        initialState.date = date.date();
     }
 
-    const [state, setState] = useState(dateValue);
+    const [state, setState] = useState<DateInputState>(initialState);
 
-    const handleYear = year =>
+    const handleYear = (year: string) =>
         handleChange({ ...state, year: parseInt(year, 10) });
 
-    const handleMonth = month =>
+    const handleMonth = (month: string) =>
         handleChange({ ...state, month: parseInt(month, 10) });
 
-    const handleDay = day =>
+    const handleDay = (day: string) =>
         handleChange({ ...state, date: parseInt(day, 10) });
 
-    const handleChange = input => {
+    const handleChange = (input: DateInputState) => {
         setState(input);
 
         const isDateSet =

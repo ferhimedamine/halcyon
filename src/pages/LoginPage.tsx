@@ -1,41 +1,47 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import { useMutation } from '@apollo/react-hooks';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { Container, FormGroup } from 'reactstrap';
-import { toast } from 'react-toastify';
-import { RESET_PASSWORD } from '../graphql';
-import { TextInput, Button } from '../components';
+import { GENERATE_TOKEN } from '../graphql';
+import { TextInput, CheckboxInput, Button, AuthContext } from '../components';
 import { captureException } from '../utils/logger';
-
-const initialValues = {
-    emailAddress: '',
-    newPassword: '',
-    confirmNewPassword: ''
-};
 
 const validationSchema = Yup.object().shape({
     emailAddress: Yup.string().label('Email Address').email().required(),
-    newPassword: Yup.string().label('New Password').min(8).max(50).required(),
-    confirmNewPassword: Yup.string()
-        .label('Confirm New Password')
-        .required()
-        .oneOf(
-            [Yup.ref('newPassword')],
-            d => `The "${d.label}" field does not match.`
-        )
+    password: Yup.string().label('Password').required(),
+    rememberMe: Yup.bool().label('Remember Me').notRequired()
 });
 
-export const ResetPasswordPage = ({ match, history }) => {
-    const [resetPassword] = useMutation(RESET_PASSWORD, {
-        variables: { token: match.params.token }
-    });
+type LoginFormValues = Yup.InferType<typeof validationSchema>;
 
-    const onSubmit = async variables => {
+const initialValues: LoginFormValues = {
+    emailAddress: '',
+    password: '',
+    rememberMe: true
+};
+
+export const LoginPage: React.FC<RouteComponentProps> = ({ history }) => {
+    const { setToken } = useContext(AuthContext);
+
+    const [generateToken] = useMutation(GENERATE_TOKEN);
+
+    const onSubmit = async (variables: LoginFormValues) => {
         try {
-            const result = await resetPassword({ variables });
-            toast.success(result.data.resetPassword.message);
-            history.push('/login');
+            const result = await generateToken({
+                variables: {
+                    grantType: 'PASSWORD',
+                    ...variables
+                }
+            });
+
+            setToken(
+                result.data.generateToken.accessToken,
+                variables.rememberMe
+            );
+
+            history.push('/');
         } catch (error) {
             captureException(error);
         }
@@ -43,10 +49,10 @@ export const ResetPasswordPage = ({ match, history }) => {
 
     return (
         <Container>
-            <h1>Reset Password</h1>
+            <h1>Login</h1>
             <hr />
 
-            <Formik
+            <Formik<LoginFormValues>
                 initialValues={initialValues}
                 validationSchema={validationSchema}
                 onSubmit={onSubmit}
@@ -62,23 +68,21 @@ export const ResetPasswordPage = ({ match, history }) => {
                             autoComplete="username"
                             component={TextInput}
                         />
+
                         <Field
-                            name="newPassword"
+                            name="password"
                             type="password"
-                            label="New Password"
+                            label="Password"
                             required
                             maxLength={50}
-                            autoComplete="new-password"
+                            autoComplete="current-password"
                             component={TextInput}
                         />
+
                         <Field
-                            name="confirmNewPassword"
-                            type="password"
-                            label="Confirm New Password"
-                            required
-                            maxLength={50}
-                            autoComplete="new-password"
-                            component={TextInput}
+                            name="rememberMe"
+                            label="Remember my password on this computer"
+                            component={CheckboxInput}
                         />
 
                         <FormGroup className="text-right">
@@ -93,6 +97,14 @@ export const ResetPasswordPage = ({ match, history }) => {
                     </Form>
                 )}
             </Formik>
+
+            <p>
+                Not already a member? <Link to="/register">Register now</Link>
+            </p>
+            <p>
+                Forgotten your password?{' '}
+                <Link to="/forgot-password">Request reset</Link>
+            </p>
         </Container>
     );
 };

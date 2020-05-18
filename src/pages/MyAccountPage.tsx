@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import moment from 'moment';
-import { Link } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { Container, Alert } from 'reactstrap';
 import confirm from 'reactstrap-confirm';
@@ -8,7 +8,7 @@ import { toast } from 'react-toastify';
 import { GET_PROFILE, DELETE_ACCOUNT } from '../graphql';
 import { Button, Spinner, AuthContext } from '../components';
 
-export const MyAccountPage = ({ history }) => {
+export const MyAccountPage: React.FC<RouteComponentProps> = ({ history }) => {
     const { removeToken } = useContext(AuthContext);
 
     const { loading, data } = useQuery(GET_PROFILE);

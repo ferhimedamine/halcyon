@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Container, Jumbotron, Button } from 'reactstrap';
 
-export const NotFoundPage = () => (
+export const NotFoundPage: React.FC = () => (
     <Jumbotron>
         <Container>
             <h1 className="display-3">Page Not Found</h1>

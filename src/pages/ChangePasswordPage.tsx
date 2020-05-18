@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import { useMutation } from '@apollo/react-hooks';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
@@ -8,12 +8,6 @@ import { toast } from 'react-toastify';
 import { CHANGE_PASSWORD } from '../graphql';
 import { TextInput, Button } from '../components';
 import { captureException } from '../utils/logger';
-
-const initialValues = {
-    currentPassword: '',
-    newPassword: '',
-    confirmNewPassword: ''
-};
 
 const validationSchema = Yup.object().shape({
     currentPassword: Yup.string().label('Current Password').required(),
@@ -27,10 +21,20 @@ const validationSchema = Yup.object().shape({
         )
 });
 
-export const ChangePasswordPage = ({ history }) => {
+type ChangePasswordFormValues = Yup.InferType<typeof validationSchema>;
+
+const initialValues: ChangePasswordFormValues = {
+    currentPassword: '',
+    newPassword: '',
+    confirmNewPassword: ''
+};
+
+export const ChangePasswordPage: React.FC<RouteComponentProps> = ({
+    history
+}) => {
     const [changePassword] = useMutation(CHANGE_PASSWORD);
 
-    const onSubmit = async variables => {
+    const onSubmit = async (variables: ChangePasswordFormValues) => {
         try {
             const result = await changePassword({ variables });
             toast.success(result.data.changePassword.message);
@@ -45,7 +49,7 @@ export const ChangePasswordPage = ({ history }) => {
             <h1>Change Password</h1>
             <hr />
 
-            <Formik
+            <Formik<ChangePasswordFormValues>
                 initialValues={initialValues}
                 validationSchema={validationSchema}
                 onSubmit={onSubmit}

@@ -1,16 +1,20 @@
-import React from 'react';
+import React, { ErrorInfo } from 'react';
 import { Link } from 'react-router-dom';
 import { Container, Jumbotron, Button } from 'reactstrap';
 import { captureException, showReportDialog } from '../../utils/logger';
 
-export class ErrorBoundary extends React.Component {
+export interface ErrorBoundaryState {
+    hasError: boolean;
+}
+
+export class ErrorBoundary extends React.Component<{}, ErrorBoundaryState> {
     state = { hasError: false };
 
     static getDerivedStateFromError() {
         return { hasError: true };
     }
 
-    componentDidCatch(error, errorInfo) {
+    componentDidCatch(error: Error, errorInfo: ErrorInfo) {
         captureException(error, errorInfo);
     }
 

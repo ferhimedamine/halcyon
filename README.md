@@ -8,6 +8,8 @@ A web application template.
 
 -   React
     [https://reactjs.org](https://reactjs.org)
+-   TypeScript
+    [https://www.typescriptlang.org](https://www.typescriptlang.org)
 -   Apollo GraphQL
     [https://www.apollographql.com](https://www.apollographql.com)
 -   FaunaDB

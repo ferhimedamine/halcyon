@@ -1,7 +1,14 @@
 import React from 'react';
 import { Pagination, PaginationItem, PaginationLink } from 'reactstrap';
 
-export const Pager = ({
+export interface PagerProps {
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+    onNextPage: () => void;
+    onPreviousPage: () => void;
+}
+
+export const Pager: React.FC<PagerProps> = ({
     hasNextPage,
     hasPreviousPage,
     onNextPage,

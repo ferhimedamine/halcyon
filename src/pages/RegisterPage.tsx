@@ -1,12 +1,11 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { useQuery, useMutation } from '@apollo/react-hooks';
+import React, { useContext } from 'react';
+import { Link, RouteComponentProps } from 'react-router-dom';
+import { useMutation } from '@apollo/react-hooks';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
-import { Container, Alert, FormGroup } from 'reactstrap';
-import { toast } from 'react-toastify';
-import { GET_PROFILE, UPDATE_PROFILE } from '../graphql';
-import { Spinner, TextInput, DateInput, Button } from '../components';
+import { Container, FormGroup } from 'reactstrap';
+import { REGISTER, GENERATE_TOKEN } from '../graphql';
+import { TextInput, DateInput, Button, AuthContext } from '../components';
 import { captureException } from '../utils/logger';
 
 const validationSchema = Yup.object().shape({
@@ -15,33 +14,47 @@ const validationSchema = Yup.object().shape({
         .max(254)
         .email()
         .required(),
+    password: Yup.string().label('Password').min(8).max(50).required(),
+    confirmPassword: Yup.string()
+        .label('Confirm Password')
+        .required()
+        .oneOf(
+            [Yup.ref('password')],
+            d => `The "${d.label}" field does not match.`
+        ),
     firstName: Yup.string().label('First Name').max(50).required(),
     lastName: Yup.string().label('Last Name').max(50).required(),
     dateOfBirth: Yup.string().label('Date of Birth').required()
 });
 
-export const UpdateProfilePage = ({ history }) => {
-    const { loading, data } = useQuery(GET_PROFILE);
+type RegisterFormValues = Yup.InferType<typeof validationSchema>;
 
-    const [updateProfile] = useMutation(UPDATE_PROFILE);
+const initialValues: RegisterFormValues = {
+    emailAddress: '',
+    password: '',
+    confirmPassword: '',
+    firstName: '',
+    lastName: '',
+    dateOfBirth: ''
+};
 
-    if (loading) {
-        return <Spinner />;
-    }
+export const RegisterPage: React.FC<RouteComponentProps> = ({ history }) => {
+    const { setToken } = useContext(AuthContext);
 
-    if (!data?.getProfile) {
-        return (
-            <Alert color="info" className="container p-3 mb-3">
-                Profile could not be found.
-            </Alert>
-        );
-    }
+    const [register] = useMutation(REGISTER);
 
-    const onSubmit = async variables => {
+    const [generateToken] = useMutation(GENERATE_TOKEN);
+
+    const onSubmit = async (variables: RegisterFormValues) => {
         try {
-            const result = await updateProfile({ variables });
-            toast.success(result.data.updateProfile.message);
-            history.push('/my-account');
+            await register({ variables });
+
+            const result = await generateToken({
+                variables: { grantType: 'PASSWORD', ...variables }
+            });
+
+            setToken(result.data.generateToken.accessToken);
+            history.push('/');
         } catch (error) {
             captureException(error);
         }
@@ -49,12 +62,11 @@ export const UpdateProfilePage = ({ history }) => {
 
     return (
         <Container>
-            <h1>Update Profile</h1>
+            <h1>Register</h1>
             <hr />
 
-            <Formik
-                enableReinitialize={true}
-                initialValues={data.getProfile}
+            <Formik<RegisterFormValues>
+                initialValues={initialValues}
                 validationSchema={validationSchema}
                 onSubmit={onSubmit}
             >
@@ -67,6 +79,26 @@ export const UpdateProfilePage = ({ history }) => {
                             required
                             maxLength={254}
                             autoComplete="username"
+                            component={TextInput}
+                        />
+
+                        <Field
+                            name="password"
+                            type="password"
+                            label="Password"
+                            required
+                            maxLength={50}
+                            autoComplete="new-password"
+                            component={TextInput}
+                        />
+
+                        <Field
+                            name="confirmPassword"
+                            type="password"
+                            label="Confirm Password"
+                            required
+                            maxLength={50}
+                            autoComplete="new-password"
                             component={TextInput}
                         />
 
@@ -98,13 +130,6 @@ export const UpdateProfilePage = ({ history }) => {
 
                         <FormGroup className="text-right">
                             <Button
-                                to="/my-account"
-                                className="mr-1"
-                                tag={Link}
-                            >
-                                Cancel
-                            </Button>
-                            <Button
                                 type="submit"
                                 color="primary"
                                 loading={isSubmitting}
@@ -115,6 +140,10 @@ export const UpdateProfilePage = ({ history }) => {
                     </Form>
                 )}
             </Formik>
+
+            <p>
+                Already have an account? <Link to="/login">Log in now</Link>
+            </p>
         </Container>
     );
 };

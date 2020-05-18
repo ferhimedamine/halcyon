@@ -1,3 +1,5 @@
+import { DecodedToken } from '../components';
+
 export const AVAILABLE_ROLES = ['System Administrator', 'User Administrator'];
 
 export const USER_ADMINISTRATOR = [
@@ -5,7 +7,7 @@ export const USER_ADMINISTRATOR = [
     'User Administrator'
 ];
 
-export const isAuthorized = (user, requiredRoles) => {
+export const isAuthorized = (user?: DecodedToken, requiredRoles?: string[]) => {
     if (!user) {
         return false;
     }

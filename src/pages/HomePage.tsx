@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Container, Jumbotron, Row, Col, Button } from 'reactstrap';
 
-export const HomePage = () => (
+export const HomePage: React.FC = () => (
     <>
         <Jumbotron>
             <Container>

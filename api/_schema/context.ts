@@ -1,16 +1,22 @@
 import { AuthenticationError, ForbiddenError } from 'apollo-server';
 import { ContextFunction } from 'apollo-server-core';
-import { skip } from 'graphql-resolvers';
+import { IncomingMessage } from 'http';
+import { ResolverFn } from './gen-types';
 import { verifyToken } from '../_utils/jwt';
 import { isAuthorized, DecodedToken } from '../_utils/auth';
+
+export interface RequestContext {
+    req: IncomingMessage;
+}
 
 export interface Context {
     payload?: DecodedToken;
 }
 
-export const context: ContextFunction = async ({ req, event }: any) => {
-    const headers = (req || event).headers;
-    const authHeader = headers.authorization || headers.Authorization || '';
+export const context: ContextFunction<RequestContext, Context> = async ({
+    req
+}) => {
+    const authHeader = req.headers.authorization || '';
 
     const token = authHeader.replace(/bearer /giu, '');
     if (!token) {
@@ -23,21 +29,32 @@ export const context: ContextFunction = async ({ req, event }: any) => {
     };
 };
 
-export const isAuthenticated = (requiredRoles?: string[]) => (
-    _: any,
-    __: any,
-    { payload }: any
+export const isAuthenticated = <
+    TResult,
+    TParent,
+    TContext extends Context,
+    TArgs
+>(
+    resolverFn: ResolverFn<TResult, TParent, TContext, TArgs>,
+    requiredRoles?: string[]
+): ResolverFn<TResult, TParent, TContext, TArgs> => (
+    parent: TParent,
+    args: TArgs,
+    context: TContext,
+    info: any
 ) => {
+    const { payload } = context;
+
     if (!payload) {
-        return new AuthenticationError('The token provided was invalid.');
+        throw new AuthenticationError('The token provided was invalid.');
     }
 
     const authorized = isAuthorized(payload, requiredRoles);
     if (!authorized) {
-        return new ForbiddenError(
+        throw new ForbiddenError(
             'You are not authorized to view this resource.'
         );
     }
 
-    return skip;
+    return resolverFn(parent, args, context, info);
 };

@@ -6,14 +6,17 @@ import {
     removeUser
 } from '../../_data/userRepository';
 import { Resolvers } from '../gen-types';
+import { isAuthenticated } from '../context';
 import { generateHash, verifyHash } from '../../_utils/hash';
 
 export const manageResolvers: Resolvers = {
     Query: {
-        getProfile: async (_, __, { payload }) => getUserById(payload!.sub)
+        getProfile: isAuthenticated(async (_, __, { payload }) =>
+            getUserById(payload!.sub)
+        )
     },
     Mutation: {
-        updateProfile: async (_, { input }, { payload }) => {
+        updateProfile: isAuthenticated(async (_, { input }, { payload }) => {
             const user = await getUserById(payload!.sub);
             if (!user) {
                 throw new ApolloError('User not found.', 'USER_NOT_FOUND');
@@ -43,37 +46,38 @@ export const manageResolvers: Resolvers = {
                 code: 'PROFILE_UPDATED',
                 user
             };
-        },
-        changePassword: async (
-            _,
-            { currentPassword, newPassword },
-            { payload }
-        ) => {
-            const user = await getUserById(payload!.sub);
-            if (!user) {
-                throw new ApolloError('User not found.', 'USER_NOT_FOUND');
-            }
+        }),
+        changePassword: isAuthenticated(
+            async (_, { currentPassword, newPassword }, { payload }) => {
+                const user = await getUserById(payload!.sub);
+                if (!user) {
+                    throw new ApolloError('User not found.', 'USER_NOT_FOUND');
+                }
 
-            const verified = await verifyHash(currentPassword, user.password);
-
-            if (!verified) {
-                throw new ApolloError(
-                    'Incorrect password.',
-                    'INCORRECT_PASSWORD'
+                const verified = await verifyHash(
+                    currentPassword,
+                    user.password
                 );
+
+                if (!verified) {
+                    throw new ApolloError(
+                        'Incorrect password.',
+                        'INCORRECT_PASSWORD'
+                    );
+                }
+
+                user.password = await generateHash(newPassword);
+                user.passwordResetToken = undefined;
+                await updateUser(user);
+
+                return {
+                    message: 'Your password has been changed.',
+                    code: 'PASSWORD_CHANGED',
+                    user
+                };
             }
-
-            user.password = await generateHash(newPassword);
-            user.passwordResetToken = undefined;
-            await updateUser(user);
-
-            return {
-                message: 'Your password has been changed.',
-                code: 'PASSWORD_CHANGED',
-                user
-            };
-        },
-        deleteAccount: async (_, __, { payload }) => {
+        ),
+        deleteAccount: isAuthenticated(async (_, __, { payload }) => {
             const user = await getUserById(payload!.sub);
             if (!user) {
                 throw new ApolloError('User not found.', 'USER_NOT_FOUND');
@@ -86,6 +90,6 @@ export const manageResolvers: Resolvers = {
                 code: 'ACCOUNT_DELETED',
                 user
             };
-        }
+        })
     }
 };

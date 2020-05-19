@@ -8,15 +8,23 @@ import {
     removeUser
 } from '../../_data/userRepository';
 import { Resolvers } from '../gen-types';
+import { isAuthenticated } from '../context';
 import { generateHash } from '../../_utils/hash';
+import { USER_ADMINISTRATOR } from '../../_utils/auth';
 
 export const userResolvers: Resolvers = {
     Query: {
-        searchUsers: async (_, { input }) => searchUsers(input),
-        getUserById: async (_, { id }) => getUserById(id)
+        searchUsers: isAuthenticated(
+            async (_, { input }) => searchUsers(input),
+            USER_ADMINISTRATOR
+        ),
+        getUserById: isAuthenticated(
+            async (_, { id }) => getUserById(id),
+            USER_ADMINISTRATOR
+        )
     },
     Mutation: {
-        createUser: async (_, { input }) => {
+        createUser: isAuthenticated(async (_, { input }) => {
             const existing = await getUserByEmailAddress(input.emailAddress);
 
             if (existing) {
@@ -41,8 +49,8 @@ export const userResolvers: Resolvers = {
                 code: 'USER_CREATED',
                 user: result
             };
-        },
-        updateUser: async (_, { id, input }) => {
+        }, USER_ADMINISTRATOR),
+        updateUser: isAuthenticated(async (_, { id, input }) => {
             const user = await getUserById(id);
             if (!user) {
                 throw new ApolloError('User not found.', 'USER_NOT_FOUND');
@@ -73,8 +81,8 @@ export const userResolvers: Resolvers = {
                 code: 'USER_UPDATED',
                 user
             };
-        },
-        lockUser: async (_, { id }, { payload }) => {
+        }, USER_ADMINISTRATOR),
+        lockUser: isAuthenticated(async (_, { id }, { payload }) => {
             const user = await getUserById(id);
             if (!user) {
                 throw new ApolloError('User not found.', 'USER_NOT_FOUND');
@@ -95,8 +103,8 @@ export const userResolvers: Resolvers = {
                 code: 'USER_LOCKED',
                 user
             };
-        },
-        unlockUser: async (_, { id }) => {
+        }, USER_ADMINISTRATOR),
+        unlockUser: isAuthenticated(async (_, { id }) => {
             const user = await getUserById(id);
             if (!user) {
                 throw new ApolloError('User not found.', 'USER_NOT_FOUND');
@@ -110,8 +118,8 @@ export const userResolvers: Resolvers = {
                 code: 'USER_UNLOCKED',
                 user
             };
-        },
-        deleteUser: async (_, { id }, { payload }) => {
+        }, USER_ADMINISTRATOR),
+        deleteUser: isAuthenticated(async (_, { id }, { payload }) => {
             const user = await getUserById(id);
             if (!user) {
                 throw new ApolloError('User not found.', 'USER_NOT_FOUND');
@@ -131,6 +139,6 @@ export const userResolvers: Resolvers = {
                 code: 'USER_DELETED',
                 user
             };
-        }
+        }, USER_ADMINISTRATOR)
     }
 };

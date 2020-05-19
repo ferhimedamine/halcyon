@@ -11,7 +11,7 @@ import {
     useLockUserMutation,
     useUnlockUserMutation,
     useDeleteUserMutation
-} from '../graphql';
+} from '../graphql/gen-types';
 import {
     Spinner,
     TextInput,

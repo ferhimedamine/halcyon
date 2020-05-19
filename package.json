@@ -8,7 +8,7 @@
         "postbuild": "yarn workbox && yarn fauna",
         "workbox": "workbox injectManifest workbox-config.js",
         "fauna": "node scripts/fauna.js",
-        "codegen": "graphql-codegen --config codegen-server.yml",
+        "codegen": "graphql-codegen",
         "lint": "eslint \"**/*.{ts,tsx}\"",
         "format": "prettier --write \"**/*.{ts,tsx,json,scss,md,yml,html,gql}\""
     },

@@ -16,7 +16,7 @@ import {
     Card,
     Badge
 } from 'reactstrap';
-import { useSearchUsersQuery, UserSortExpression } from '../graphql';
+import { useSearchUsersQuery, UserSortExpression } from '../graphql/gen-types';
 import { Spinner, Pager } from '../components';
 
 const sortOptions = [

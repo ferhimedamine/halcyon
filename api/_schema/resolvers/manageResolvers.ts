@@ -6,16 +6,11 @@ import {
     updateUser,
     removeUser
 } from '../../_data/userRepository';
-import { MutationResolvers, QueryResolvers } from '../resolvers-types';
+import { Resolvers } from '../gen-types';
 import { isAuthenticated } from '../context';
 import { generateHash, verifyHash } from '../../_utils/hash';
 
-export interface ManageResolvers {
-    Query?: QueryResolvers;
-    Mutation?: MutationResolvers;
-}
-
-export const manageResolvers: ManageResolvers = {
+export const manageResolvers: Resolvers = {
     Query: {
         getProfile: combineResolvers(
             isAuthenticated(),

@@ -4,7 +4,7 @@ import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { Container, FormGroup } from 'reactstrap';
 import { toast } from 'react-toastify';
-import { useChangePasswordMutation } from '../graphql';
+import { useChangePasswordMutation } from '../graphql/gen-types';
 import { TextInput, Button } from '../components';
 import { captureException } from '../utils/logger';
 

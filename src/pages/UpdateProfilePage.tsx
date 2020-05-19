@@ -4,7 +4,10 @@ import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { Container, Alert, FormGroup } from 'reactstrap';
 import { toast } from 'react-toastify';
-import { useGetProfileQuery, useUpdateProfileMutation } from '../graphql';
+import {
+    useGetProfileQuery,
+    useUpdateProfileMutation
+} from '../graphql/gen-types';
 import { Spinner, TextInput, DateInput, Button } from '../components';
 import { captureException } from '../utils/logger';
 

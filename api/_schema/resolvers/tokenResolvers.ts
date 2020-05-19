@@ -1,15 +1,10 @@
 import { ApolloError } from 'apollo-server';
 import { getUserByEmailAddress } from '../../_data/userRepository';
-import { MutationResolvers, QueryResolvers } from '../resolvers-types';
+import { Resolvers } from '../gen-types';
 import { generateToken } from '../../_utils/jwt';
 import { verifyHash } from '../../_utils/hash';
 
-export interface TokenResolvers {
-    Query?: QueryResolvers;
-    Mutation?: MutationResolvers;
-}
-
-export const tokenResolvers: TokenResolvers = {
+export const tokenResolvers: Resolvers = {
     Mutation: {
         generateToken: async (_, { input }) => {
             const user = await getUserByEmailAddress(input.emailAddress);

@@ -4,7 +4,7 @@ import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { Container, FormGroup } from 'reactstrap';
 import { toast } from 'react-toastify';
-import { useCreateUserMutation } from '../graphql';
+import { useCreateUserMutation } from '../graphql/gen-types';
 import {
     TextInput,
     DateInput,

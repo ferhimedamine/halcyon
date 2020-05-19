@@ -1,14 +1,23 @@
 overwrite: true
-schema: 'http://localhost:3000/api'
-documents: 'src/graphql/**/*.gql'
+schema: ./api/_schema/typeDefs/**/*Schema.ts
 generates:
-    src/graphql/index.tsx:
+    ./api/_schema/gen-types.ts:
         plugins:
-            - 'typescript'
-            - 'typescript-operations'
-            - 'typescript-react-apollo'
+            - typescript
+            - typescript-resolvers
         config:
+            maybeValue: T | undefined
+            contextType: ./context#Context
+            useIndexSignature: true
+
+    src/graphql/gen-types.tsx:
+        documents: ./src/graphql/**/*.gql
+        plugins:
+            - typescript
+            - typescript-operations
+            - typescript-react-apollo
+        config:
+            maybeValue: T | undefined
             withHooks: true
             withHOC: false
             withComponent: false
-            maybeValue: T | undefined

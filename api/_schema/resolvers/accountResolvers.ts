@@ -5,16 +5,11 @@ import {
     createUser,
     updateUser
 } from '../../_data/userRepository';
-import { MutationResolvers, QueryResolvers } from '../resolvers-types';
+import { Resolvers } from '../gen-types';
 import { sendEmail } from '../../_utils/email';
 import { generateHash } from '../../_utils/hash';
 
-export interface AccountResolvers {
-    Query?: QueryResolvers;
-    Mutation?: MutationResolvers;
-}
-
-export const accountResolvers: AccountResolvers = {
+export const accountResolvers: Resolvers = {
     Mutation: {
         register: async (_, { input }) => {
             const existing = await getUserByEmailAddress(input.emailAddress);

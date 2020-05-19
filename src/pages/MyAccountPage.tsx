@@ -4,7 +4,10 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import { Container, Alert } from 'reactstrap';
 import confirm from 'reactstrap-confirm';
 import { toast } from 'react-toastify';
-import { useGetProfileQuery, useDeleteAccountMutation } from '../graphql';
+import {
+    useGetProfileQuery,
+    useDeleteAccountMutation
+} from '../graphql/gen-types';
 import { Button, Spinner, AuthContext } from '../components';
 
 export const MyAccountPage: React.FC<RouteComponentProps> = ({ history }) => {

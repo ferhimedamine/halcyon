@@ -3,7 +3,7 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { Container, FormGroup } from 'reactstrap';
-import { useGenerateTokenMutation, GrantType } from '../graphql';
+import { useGenerateTokenMutation, GrantType } from '../graphql/gen-types';
 import { TextInput, CheckboxInput, Button, AuthContext } from '../components';
 import { captureException } from '../utils/logger';
 

@@ -3,7 +3,7 @@ import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { Container, FormGroup } from 'reactstrap';
 import { toast } from 'react-toastify';
-import { useForgotPasswordMutation } from '../graphql';
+import { useForgotPasswordMutation } from '../graphql/gen-types';
 import { TextInput, Button } from '../components';
 import { captureException } from '../utils/logger';
 import { RouteComponentProps } from 'react-router-dom';

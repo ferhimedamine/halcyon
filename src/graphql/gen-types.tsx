@@ -9,20 +9,8 @@ export type Scalars = {
     Boolean: boolean;
     Int: number;
     Float: number;
-    /**
-     * A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the
-     * `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO
-     * 8601 standard for representation of dates and times using the Gregorian calendar.
-     */
     DateTime: any;
-    /** The `Upload` scalar type represents a file upload. */
-    Upload: any;
 };
-
-export enum CacheControlScope {
-    Public = 'PUBLIC',
-    Private = 'PRIVATE'
-}
 
 export type CreateUserInput = {
     emailAddress: Scalars['String'];
@@ -40,48 +28,48 @@ export enum GrantType {
 export type Mutation = {
     __typename?: 'Mutation';
     _?: Maybe<Scalars['Boolean']>;
-    createUser?: Maybe<UserMutationResponse>;
-    updateUser?: Maybe<UserMutationResponse>;
-    lockUser?: Maybe<UserMutationResponse>;
-    unlockUser?: Maybe<UserMutationResponse>;
-    deleteUser?: Maybe<UserMutationResponse>;
-    register?: Maybe<UserMutationResponse>;
-    forgotPassword?: Maybe<MutationResponse>;
-    resetPassword?: Maybe<UserMutationResponse>;
-    updateProfile?: Maybe<UserMutationResponse>;
     changePassword?: Maybe<UserMutationResponse>;
+    createUser?: Maybe<UserMutationResponse>;
     deleteAccount?: Maybe<UserMutationResponse>;
-    seedData?: Maybe<MutationResponse>;
+    deleteUser?: Maybe<UserMutationResponse>;
+    forgotPassword?: Maybe<MutationResponse>;
     generateToken?: Maybe<Token>;
+    lockUser?: Maybe<UserMutationResponse>;
+    register?: Maybe<UserMutationResponse>;
+    resetPassword?: Maybe<UserMutationResponse>;
+    seedData?: Maybe<MutationResponse>;
+    unlockUser?: Maybe<UserMutationResponse>;
+    updateProfile?: Maybe<UserMutationResponse>;
+    updateUser?: Maybe<UserMutationResponse>;
+};
+
+export type MutationChangePasswordArgs = {
+    currentPassword: Scalars['String'];
+    newPassword: Scalars['String'];
 };
 
 export type MutationCreateUserArgs = {
     input?: Maybe<CreateUserInput>;
 };
 
-export type MutationUpdateUserArgs = {
+export type MutationDeleteUserArgs = {
     id: Scalars['ID'];
-    input?: Maybe<UpdateUserInput>;
+};
+
+export type MutationForgotPasswordArgs = {
+    emailAddress: Scalars['String'];
+};
+
+export type MutationGenerateTokenArgs = {
+    input?: Maybe<TokenInput>;
 };
 
 export type MutationLockUserArgs = {
     id: Scalars['ID'];
 };
 
-export type MutationUnlockUserArgs = {
-    id: Scalars['ID'];
-};
-
-export type MutationDeleteUserArgs = {
-    id: Scalars['ID'];
-};
-
 export type MutationRegisterArgs = {
     input?: Maybe<RegisterInput>;
-};
-
-export type MutationForgotPasswordArgs = {
-    emailAddress: Scalars['String'];
 };
 
 export type MutationResetPasswordArgs = {
@@ -90,17 +78,17 @@ export type MutationResetPasswordArgs = {
     newPassword: Scalars['String'];
 };
 
+export type MutationUnlockUserArgs = {
+    id: Scalars['ID'];
+};
+
 export type MutationUpdateProfileArgs = {
     input?: Maybe<UpdateProfileInput>;
 };
 
-export type MutationChangePasswordArgs = {
-    currentPassword: Scalars['String'];
-    newPassword: Scalars['String'];
-};
-
-export type MutationGenerateTokenArgs = {
-    input?: Maybe<TokenInput>;
+export type MutationUpdateUserArgs = {
+    id: Scalars['ID'];
+    input?: Maybe<UpdateUserInput>;
 };
 
 export type MutationResponse = {
@@ -112,17 +100,17 @@ export type MutationResponse = {
 export type Query = {
     __typename?: 'Query';
     _?: Maybe<Scalars['Boolean']>;
-    searchUsers?: Maybe<UserSearchResult>;
-    getUserById?: Maybe<User>;
     getProfile?: Maybe<User>;
-};
-
-export type QuerySearchUsersArgs = {
-    input?: Maybe<SearchUserInput>;
+    getUserById?: Maybe<User>;
+    searchUsers?: Maybe<UserSearchResult>;
 };
 
 export type QueryGetUserByIdArgs = {
     id: Scalars['ID'];
+};
+
+export type QuerySearchUsersArgs = {
+    input?: Maybe<SearchUserInput>;
 };
 
 export type RegisterInput = {

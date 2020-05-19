@@ -3,7 +3,7 @@ import {
     GraphQLScalarType,
     GraphQLScalarTypeConfig
 } from 'graphql';
-import { Context } from '../context';
+import { Context } from './context';
 export type Maybe<T> = T | undefined;
 export type RequireFields<T, K extends keyof T> = {
     [X in Exclude<keyof T, K>]?: T[X];

@@ -3,16 +3,11 @@ import {
     createUser,
     removeUser
 } from '../../_data/userRepository';
-import { MutationResolvers, QueryResolvers } from '../resolvers-types';
+import { Resolvers } from '../gen-types';
 import { generateHash } from '../../_utils/hash';
 import { config } from '../../_utils/config';
 
-export interface SeedResolvers {
-    Query?: QueryResolvers;
-    Mutation?: MutationResolvers;
-}
-
-export const seedResolvers: SeedResolvers = {
+export const seedResolvers: Resolvers = {
     Mutation: {
         seedData: async () => {
             const existing = await getUserByEmailAddress(

@@ -7,7 +7,7 @@ import {
     useRegisterMutation,
     useGenerateTokenMutation,
     GrantType
-} from '../graphql';
+} from '../graphql/gen-types';
 import { TextInput, DateInput, Button, AuthContext } from '../components';
 import { captureException } from '../utils/logger';
 

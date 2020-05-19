@@ -8,17 +8,12 @@ import {
     updateUser,
     removeUser
 } from '../../_data/userRepository';
-import { MutationResolvers, QueryResolvers } from '../resolvers-types';
+import { Resolvers } from '../gen-types';
 import { isAuthenticated } from '../context';
 import { generateHash } from '../../_utils/hash';
 import { USER_ADMINISTRATOR } from '../../_utils/auth';
 
-export interface UserResolvers {
-    Query?: QueryResolvers;
-    Mutation?: MutationResolvers;
-}
-
-export const userResolvers: UserResolvers = {
+export const userResolvers: Resolvers = {
     Query: {
         searchUsers: combineResolvers(
             isAuthenticated(USER_ADMINISTRATOR),

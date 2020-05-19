@@ -1,9 +1,16 @@
-module.exports.USER_ADMINISTRATOR = [
+export interface DecodedToken {
+    sub: string;
+    given_name: string;
+    family_name: string;
+    role: string | string[];
+}
+
+export const USER_ADMINISTRATOR = [
     'System Administrator',
     'User Administrator'
 ];
 
-module.exports.isAuthorized = (user, requiredRoles) => {
+export const isAuthorized = (user?: DecodedToken, requiredRoles?: string[]) => {
     if (!user) {
         return false;
     }

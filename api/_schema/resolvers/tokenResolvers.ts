@@ -1,11 +1,11 @@
-const { ApolloError } = require('apollo-server');
-const { getUserByEmailAddress } = require('../../_data/userRepository');
-const { generateToken } = require('../../_utils/jwt');
-const { verifyHash } = require('../../_utils/hash');
+import { ApolloError } from 'apollo-server';
+import { getUserByEmailAddress } from '../../_data/userRepository';
+import { generateToken } from '../../_utils/jwt';
+import { verifyHash } from '../../_utils/hash';
 
-module.exports = {
+export default {
     Mutation: {
-        generateToken: async (_, { input }) => {
+        generateToken: async (_: any, { input }: any) => {
             const user = await getUserByEmailAddress(input.emailAddress);
             if (!user) {
                 throw new ApolloError(

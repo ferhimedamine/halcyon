@@ -1,16 +1,16 @@
-const {
+import {
     getUserByEmailAddress,
     createUser,
     removeUser
-} = require('../../_data/userRepository');
-const { generateHash } = require('../../_utils/hash');
-const config = require('../../_utils/config');
+} from '../../_data/userRepository';
+import { generateHash } from '../../_utils/hash';
+import config from '../../_utils/config';
 
-module.exports = {
+export default {
     Mutation: {
         seedData: async () => {
             const existing = await getUserByEmailAddress(
-                config.SEED_EMAILADDRESS
+                config.SEED_EMAILADDRESS!
             );
 
             if (existing) {
@@ -18,8 +18,8 @@ module.exports = {
             }
 
             await createUser({
-                emailAddress: config.SEED_EMAILADDRESS,
-                password: await generateHash(config.SEED_PASSWORD),
+                emailAddress: config.SEED_EMAILADDRESS!,
+                password: await generateHash(config.SEED_PASSWORD!),
                 firstName: 'System',
                 lastName: 'Administrator',
                 dateOfBirth: new Date(1970, 0, 1).toISOString(),

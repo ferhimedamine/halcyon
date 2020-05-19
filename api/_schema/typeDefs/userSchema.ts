@@ -1,6 +1,6 @@
-const { gql } = require('apollo-server');
+import { gql } from 'apollo-server';
 
-module.exports = gql`
+export default gql`
     enum UserSortExpression {
         NAME_ASC
         NAME_DESC

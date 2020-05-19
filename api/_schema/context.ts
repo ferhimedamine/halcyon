@@ -1,9 +1,10 @@
-const { AuthenticationError, ForbiddenError } = require('apollo-server');
-const { skip } = require('graphql-resolvers');
-const { verifyToken } = require('../_utils/jwt');
-const { isAuthorized } = require('../_utils/auth');
+import { AuthenticationError, ForbiddenError } from 'apollo-server';
+import { ContextFunction } from 'apollo-server-core';
+import { skip } from 'graphql-resolvers';
+import { verifyToken } from '../_utils/jwt';
+import { isAuthorized } from '../_utils/auth';
 
-module.exports.context = async ({ req, event }) => {
+export const context: ContextFunction = async ({ req, event }: any) => {
     const headers = (req || event).headers;
     const authHeader = headers.authorization || headers.Authorization || '';
 
@@ -18,7 +19,11 @@ module.exports.context = async ({ req, event }) => {
     };
 };
 
-module.exports.isAuthenticated = requiredRoles => (_, __, { payload }) => {
+export const isAuthenticated = (requiredRoles?: string[]) => (
+    _: any,
+    __: any,
+    { payload }: any
+) => {
     if (!payload) {
         return new AuthenticationError('The token provided was invalid.');
     }

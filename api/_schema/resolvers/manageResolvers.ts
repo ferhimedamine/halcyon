@@ -1,25 +1,25 @@
-const { ApolloError } = require('apollo-server');
-const { combineResolvers } = require('graphql-resolvers');
-const {
+import { ApolloError } from 'apollo-server';
+import { combineResolvers } from 'graphql-resolvers';
+import {
     getUserById,
     getUserByEmailAddress,
     updateUser,
     removeUser
-} = require('../../_data/userRepository');
-const { isAuthenticated } = require('../context');
-const { generateHash, verifyHash } = require('../../_utils/hash');
+} from '../../_data/userRepository';
+import { isAuthenticated } from '../context';
+import { generateHash, verifyHash } from '../../_utils/hash';
 
-module.exports = {
+export default {
     Query: {
         getProfile: combineResolvers(
             isAuthenticated(),
-            async (_, __, { payload }) => getUserById(payload.sub)
+            async (_: any, __: any, { payload }: any) => getUserById(payload.sub)
         )
     },
     Mutation: {
         updateProfile: combineResolvers(
             isAuthenticated(),
-            async (_, { input }, { payload }) => {
+            async (_: any, { input }: any, { payload }: any) => {
                 const user = await getUserById(payload.sub);
                 if (!user) {
                     throw new ApolloError('User not found.', 'USER_NOT_FOUND');
@@ -53,7 +53,7 @@ module.exports = {
         ),
         changePassword: combineResolvers(
             isAuthenticated(),
-            async (_, { currentPassword, newPassword }, { payload }) => {
+            async (_: any, { currentPassword, newPassword }: any, { payload }: any) => {
                 const user = await getUserById(payload.sub);
                 if (!user) {
                     throw new ApolloError('User not found.', 'USER_NOT_FOUND');
@@ -84,7 +84,7 @@ module.exports = {
         ),
         deleteAccount: combineResolvers(
             isAuthenticated(),
-            async (_, __, { payload }) => {
+            async (_: any, __: any, { payload }: any) => {
                 const user = await getUserById(payload.sub);
                 if (!user) {
                     throw new ApolloError('User not found.', 'USER_NOT_FOUND');

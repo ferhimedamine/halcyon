@@ -1,12 +1,13 @@
-const Sentry = require('@sentry/node');
-const config = require('./config');
+import * as Sentry from '@sentry/node';
+import { PluginDefinition } from 'apollo-server-core';
+import config from './config';
 
-module.exports.captureException = error => {
+export const captureException = (error: Error) => {
     console.error(error);
     Sentry.captureException(error);
 };
 
-module.exports.loggerPlugin = {
+export const loggerPlugin: PluginDefinition = {
     serverWillStart() {
         Sentry.init({
             dsn: config.SENTRY_DSN,

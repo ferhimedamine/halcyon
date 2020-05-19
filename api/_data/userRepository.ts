@@ -1,16 +1,24 @@
-const { Client, query: q } = require('faunadb');
-const { base64EncodeObj, base64DecodeObj } = require('../_utils/encode');
-const config = require('../_utils/config');
+import { Client, query as q } from 'faunadb';
+import { base64EncodeObj, base64DecodeObj } from '../_utils/encode';
+import config from '../_utils/config';
 
-const client = new Client({ secret: config.FAUNADB_SECRET });
+const client = new Client({ secret: config.FAUNADB_SECRET! });
 
-module.exports.getUserById = async id => {
+export interface User {
+    id: string;
+    emailAddress: string;
+    firstName: string;
+    lastName: string;
+    roles: string[];
+}
+
+export const getUserById = async (id: string) => {
     try {
-        const result = await client.query(
+        const result = await client.query<any>(
             q.Get(q.Ref(q.Collection('users'), id))
         );
 
-        return { ...result.data, id: result.ref.id };
+        return mapUser(result);
     } catch (error) {
         if (error.name === 'NotFound') {
             return undefined;
@@ -20,9 +28,9 @@ module.exports.getUserById = async id => {
     }
 };
 
-module.exports.getUserByEmailAddress = async emailAddress => {
+export const getUserByEmailAddress = async (emailAddress: string) => {
     try {
-        const result = await client.query(
+        const result = await client.query<any>(
             q.Get(q.Match(q.Index('users_by_email_address'), emailAddress))
         );
 
@@ -36,37 +44,42 @@ module.exports.getUserByEmailAddress = async emailAddress => {
     }
 };
 
-module.exports.createUser = async user => {
-    const result = await client.query(
+export const createUser = async (user: any) => {
+    const result = await client.query<any>(
         q.Create(q.Collection('users'), { data: user })
     );
 
     return mapUser(result);
 };
 
-module.exports.updateUser = async user => {
+export const updateUser = async (user: any) => {
     const { id, ...data } = user;
 
-    const result = await client.query(
+    const result = await client.query<any>(
         q.Replace(q.Ref(q.Collection('users'), id), { data })
     );
 
     return mapUser(result);
 };
 
-module.exports.removeUser = async ({ id }) => {
-    const result = await client.query(
+export const removeUser = async (id: string) => {
+    const result = await client.query<any>(
         q.Delete(q.Ref(q.Collection('users'), id))
     );
 
     return mapUser(result);
 };
 
-module.exports.searchUsers = async ({ size, search, sort, cursor }) => {
+export const searchUsers = async ({
+    size,
+    search,
+    sort,
+    cursor
+}: any): Promise<any> => {
     const { name, values } = getIndex(sort);
     const { before, after } = parseCursor(cursor);
 
-    const result = await client.query(
+    const result = await client.query<any>(
         q.Map(
             q.Paginate(
                 q.Filter(
@@ -95,7 +108,7 @@ module.exports.searchUsers = async ({ size, search, sort, cursor }) => {
     };
 };
 
-const getIndex = sort => {
+const getIndex = (sort: string): any => {
     switch (sort) {
         case 'EMAIL_ADDRESS_DESC':
             return {
@@ -123,7 +136,7 @@ const getIndex = sort => {
     }
 };
 
-const getItems = arr => {
+const getItems = (arr: any[]) => {
     if (!arr) {
         return undefined;
     }
@@ -137,12 +150,12 @@ const getItems = arr => {
     });
 };
 
-const generateCursors = ({ before, after }) => ({
+const generateCursors = ({ before, after }: any): any => ({
     before: before && base64EncodeObj({ before: getItems(before) }),
     after: after && base64EncodeObj({ after: getItems(after) })
 });
 
-const parseItems = arr => {
+const parseItems = (arr: any[]) => {
     if (!arr) {
         return undefined;
     }
@@ -156,8 +169,8 @@ const parseItems = arr => {
     });
 };
 
-const parseCursor = str => {
-    const decoded = base64DecodeObj(str);
+const parseCursor = (str: string) => {
+    const decoded = base64DecodeObj<any>(str);
     if (!decoded) {
         return {
             before: undefined,
@@ -171,4 +184,4 @@ const parseCursor = str => {
     };
 };
 
-const mapUser = user => ({ id: user.ref.id, ...user.data });
+const mapUser = (user: any): any => ({ id: user.ref.id, ...user.data });

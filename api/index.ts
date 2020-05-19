@@ -1,6 +1,6 @@
-const { ApolloServer } = require('apollo-server-micro');
-const { typeDefs, resolvers, context } = require('./_schema');
-const { loggerPlugin } = require('./_utils/logger');
+import { ApolloServer } from 'apollo-server-micro';
+import { typeDefs, resolvers, context } from './_schema';
+import { loggerPlugin } from './_utils/logger';
 
 const server = new ApolloServer({
     typeDefs,
@@ -13,10 +13,10 @@ const server = new ApolloServer({
 
 const handler = server.createHandler({ path: '/api' });
 
-module.exports.config = {
+export const config = {
     api: {
         bodyParser: false
     }
 };
 
-module.exports = handler;
+export default handler;

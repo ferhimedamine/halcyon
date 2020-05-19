@@ -1,4 +1,4 @@
-module.exports = {
+export default {
     FAUNADB_SECRET: process.env.FAUNADB_SECRET,
     JWT_SECURITYKEY: process.env.JWT_SECURITYKEY || 'change-me',
     JWT_ISSUER: process.env.JWT_ISSUER || 'HalcyonApi',

@@ -1,4 +1,4 @@
-module.exports.format = (str, obj) => {
+export const format = (str: string, obj: { [key: string]: any }) => {
     let result = str;
 
     for (const [key, replaceValue] of Object.entries(obj)) {

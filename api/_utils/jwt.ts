@@ -1,19 +1,21 @@
-const { sign, verify } = require('jsonwebtoken');
-const config = require('./config');
+import { sign, verify } from 'jsonwebtoken';
+import { User } from '../_data/userRepository';
+import { DecodedToken } from './auth';
+import config from './config';
 
-module.exports.verifyToken = async token => {
+export const verifyToken = async (token: string) => {
     try {
         return verify(token, config.JWT_SECURITYKEY, {
             issuer: config.JWT_ISSUER,
             audience: config.JWT_AUDIENCE
-        });
+        }) as DecodedToken;
     } catch (error) {
         // ignore errors
         return undefined;
     }
 };
 
-module.exports.generateToken = user => {
+export const generateToken = (user: User) => {
     const payload = {
         sub: user.id,
         email: user.emailAddress,

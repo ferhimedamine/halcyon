@@ -1,13 +1,19 @@
-const emailTemplates = require('../_data/emailTemplates');
-const { format } = require('./string');
-const { fetch } = require('./http');
-const { base64Encode } = require('./encode');
-const config = require('./config');
+import emailTemplates from '../_data/emailTemplates';
+import { format } from './string';
+import { fetch } from './http';
+import { base64Encode } from './encode';
+import config from './config';
 
 const mailgunUrl = `https://api.mailgun.net/v3/${config.MAILGUN_DOMAIN}/messages`;
 const mailgunAuth = `Basic ${base64Encode(`api:${config.MAILGUN_APIKEY}`)}`;
 
-module.exports.sendEmail = message => {
+export interface EmailMessage {
+    to: string;
+    template: string;
+    context: { [key: string]: any };
+}
+
+export const sendEmail = (message: EmailMessage) => {
     const template = emailTemplates[message.template];
     const subject = format(template.subject, message.context);
     const html = format(template.html, message.context);

@@ -1,32 +1,32 @@
-const { ApolloError } = require('apollo-server');
-const { combineResolvers } = require('graphql-resolvers');
-const {
+import { ApolloError } from 'apollo-server';
+import { combineResolvers } from 'graphql-resolvers';
+import {
     searchUsers,
     getUserById,
     getUserByEmailAddress,
     createUser,
     updateUser,
     removeUser
-} = require('../../_data/userRepository');
-const { isAuthenticated } = require('../context');
-const { generateHash } = require('../../_utils/hash');
-const { USER_ADMINISTRATOR } = require('../../_utils/auth');
+} from '../../_data/userRepository';
+import { isAuthenticated } from '../context';
+import { generateHash } from '../../_utils/hash';
+import { USER_ADMINISTRATOR } from '../../_utils/auth';
 
-module.exports = {
+export default {
     Query: {
         searchUsers: combineResolvers(
             isAuthenticated(USER_ADMINISTRATOR),
-            async (_, { input }) => searchUsers(input)
+            async (_: any, { input }: any) => searchUsers(input)
         ),
         getUserById: combineResolvers(
             isAuthenticated(USER_ADMINISTRATOR),
-            async (_, { id }) => getUserById(id)
+            async (_: any, { id }: any) => getUserById(id)
         )
     },
     Mutation: {
         createUser: combineResolvers(
             isAuthenticated(USER_ADMINISTRATOR),
-            async (_, { input }) => {
+            async (_: any, { input }: any) => {
                 const existing = await getUserByEmailAddress(
                     input.emailAddress
                 );
@@ -57,7 +57,7 @@ module.exports = {
         ),
         updateUser: combineResolvers(
             isAuthenticated(USER_ADMINISTRATOR),
-            async (_, { id, input }) => {
+            async (_: any, { id, input }: any) => {
                 const user = await getUserById(id);
                 if (!user) {
                     throw new ApolloError('User not found.', 'USER_NOT_FOUND');
@@ -92,7 +92,7 @@ module.exports = {
         ),
         lockUser: combineResolvers(
             isAuthenticated(USER_ADMINISTRATOR),
-            async (_, { id }, { payload }) => {
+            async (_: any, { id }: any, { payload }: any) => {
                 const user = await getUserById(id);
                 if (!user) {
                     throw new ApolloError('User not found.', 'USER_NOT_FOUND');
@@ -117,7 +117,7 @@ module.exports = {
         ),
         unlockUser: combineResolvers(
             isAuthenticated(USER_ADMINISTRATOR),
-            async (_, { id }) => {
+            async (_: any, { id }: any) => {
                 const user = await getUserById(id);
                 if (!user) {
                     throw new ApolloError('User not found.', 'USER_NOT_FOUND');
@@ -135,7 +135,7 @@ module.exports = {
         ),
         deleteUser: combineResolvers(
             isAuthenticated(USER_ADMINISTRATOR),
-            async (_, { id }, { payload }) => {
+            async (_: any, { id }: any, { payload }: any) => {
                 const user = await getUserById(id);
                 if (!user) {
                     throw new ApolloError('User not found.', 'USER_NOT_FOUND');

@@ -1,16 +1,16 @@
-const { ApolloError } = require('apollo-server');
-const { v4: uuidv4 } = require('uuid');
-const {
+import { ApolloError } from 'apollo-server';
+import { v4 as uuidv4 } from 'uuid';
+import {
     getUserByEmailAddress,
     createUser,
     updateUser
-} = require('../../_data/userRepository');
-const { sendEmail } = require('../../_utils/email');
-const { generateHash } = require('../../_utils/hash');
+} from '../../_data/userRepository';
+import { sendEmail } from '../../_utils/email';
+import { generateHash } from '../../_utils/hash';
 
-module.exports = {
+export default {
     Mutation: {
-        register: async (_, { input }) => {
+        register: async (_: any, { input }: any) => {
             const existing = await getUserByEmailAddress(input.emailAddress);
             if (existing) {
                 throw new ApolloError(
@@ -35,7 +35,7 @@ module.exports = {
                 user: result
             };
         },
-        forgotPassword: async (_, { emailAddress }) => {
+        forgotPassword: async (_: any, { emailAddress }: any) => {
             const user = await getUserByEmailAddress(emailAddress);
             if (user) {
                 user.passwordResetToken = uuidv4();
@@ -56,7 +56,7 @@ module.exports = {
                 code: 'FORGOT_PASSWORD'
             };
         },
-        resetPassword: async (_, { token, emailAddress, newPassword }) => {
+        resetPassword: async (_: any, { token, emailAddress, newPassword }: any) => {
             const user = await getUserByEmailAddress(emailAddress);
             if (!user || user.passwordResetToken !== token) {
                 throw new ApolloError('Invalid token.', 'INVALID_TOKEN');

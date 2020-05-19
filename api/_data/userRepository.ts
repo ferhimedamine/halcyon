@@ -4,17 +4,33 @@ import { config } from '../_utils/config';
 
 const client = new Client({ secret: config.FAUNADB_SECRET! });
 
-export interface User {
-    id: string;
+export interface FaunaQuery<T> {
+    ref: { id: string }
+    data: T
+}
+
+export interface UserQuery extends FaunaQuery<UserData> {
+}
+
+export interface UserData {
     emailAddress: string;
+    password: string;
+    passwordResetToken?: string;
     firstName: string;
     lastName: string;
-    roles: string[];
+    dateOfBirth: string;
+    isLockedOut: boolean;
+    roles?: string[];
+}
+
+export interface User extends UserData {
+   
+    id: string;
 }
 
 export const getUserById = async (id: string) => {
     try {
-        const result = await client.query<any>(
+        const result = await client.query<UserQuery>(
             q.Get(q.Ref(q.Collection('users'), id))
         );
 
@@ -30,7 +46,7 @@ export const getUserById = async (id: string) => {
 
 export const getUserByEmailAddress = async (emailAddress: string) => {
     try {
-        const result = await client.query<any>(
+        const result = await client.query<UserQuery>(
             q.Get(q.Match(q.Index('users_by_email_address'), emailAddress))
         );
 
@@ -44,26 +60,26 @@ export const getUserByEmailAddress = async (emailAddress: string) => {
     }
 };
 
-export const createUser = async (user: any) => {
-    const result = await client.query<any>(
+export const createUser = async (user: UserData) => {
+    const result = await client.query<UserQuery>(
         q.Create(q.Collection('users'), { data: user })
     );
 
     return mapUser(result);
 };
 
-export const updateUser = async (user: any) => {
+export const updateUser = async (user: User) => {
     const { id, ...data } = user;
 
-    const result = await client.query<any>(
+    const result = await client.query<UserQuery>(
         q.Replace(q.Ref(q.Collection('users'), id), { data })
     );
 
     return mapUser(result);
 };
 
-export const removeUser = async (user: any) => {
-    const result = await client.query<any>(
+export const removeUser = async (user: User) => {
+    const result = await client.query<UserQuery>(
         q.Delete(q.Ref(q.Collection('users'), user.id))
     );
 
@@ -184,4 +200,4 @@ const parseCursor = (str: string) => {
     };
 };
 
-const mapUser = (user: any): any => ({ id: user.ref.id, ...user.data });
+const mapUser = (user: UserQuery): User => ({ id: user.ref.id, ...user.data });

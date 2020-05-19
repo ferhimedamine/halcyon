@@ -1,16 +1,55 @@
-import { Client, query as q } from 'faunadb';
+import { Client, query as q, Expr } from 'faunadb';
 import { base64EncodeObj, base64DecodeObj } from '../_utils/encode';
 import { config } from '../_utils/config';
 
 const client = new Client({ secret: config.FAUNADB_SECRET! });
 
-export interface FaunaQuery<T> {
-    ref: { id: string }
-    data: T
+export interface FaunaIndex {
+    name: string;
+    values: string[];
 }
 
-export interface UserQuery extends FaunaQuery<UserData> {
+export interface SerializedCursor {
+    id: string;
+    collection: {
+        id: string;
+    };
 }
+
+export interface SerializedCursors {
+    before?: SerializedCursor[];
+    after?: SerializedCursor[];
+}
+
+export interface DeserializedCursors {
+    before?: any[];
+    after?: any[];
+}
+
+export interface Cursors {
+    before?: string;
+    after?: string;
+}
+
+export interface FaunaQuery<T> {
+    ref: { id: string };
+    data: T;
+}
+
+export interface FaunaPaginatedQuery<T> {
+    data: FaunaQuery<T>[];
+    before?: Expr[];
+    after?: Expr[];
+}
+
+export interface Cursors {
+    before?: string;
+    after?: string;
+}
+
+export interface UserQuery extends FaunaQuery<UserData> {}
+
+export interface UserPaginatedQuery extends FaunaPaginatedQuery<UserData> {}
 
 export interface UserData {
     emailAddress: string;
@@ -24,8 +63,18 @@ export interface UserData {
 }
 
 export interface User extends UserData {
-   
     id: string;
+}
+
+export interface UserFilter {
+    size: number;
+    search: string;
+    sort: string;
+    cursor?: string;
+}
+
+export interface Users extends Cursors {
+    items: User[];
 }
 
 export const getUserById = async (id: string) => {
@@ -91,11 +140,11 @@ export const searchUsers = async ({
     search,
     sort,
     cursor
-}: any): Promise<any> => {
+}: UserFilter): Promise<Users> => {
     const { name, values } = getIndex(sort);
-    const { before, after } = parseCursor(cursor);
+    const { before, after } = deserializeCursors(cursor);
 
-    const result = await client.query<any>(
+    const result = await client.query<UserPaginatedQuery>(
         q.Map(
             q.Paginate(
                 q.Filter(
@@ -120,11 +169,11 @@ export const searchUsers = async ({
 
     return {
         items: result.data.map(mapUser),
-        ...generateCursors(result)
+        ...serializeCursors(result)
     };
 };
 
-const getIndex = (sort: string): any => {
+const getIndex = (sort: string): FaunaIndex => {
     switch (sort) {
         case 'EMAIL_ADDRESS_DESC':
             return {
@@ -152,7 +201,7 @@ const getIndex = (sort: string): any => {
     }
 };
 
-const getItems = (arr: any[]) => {
+const serializeCursor = (arr: any[]): SerializedCursor[] | undefined => {
     if (!arr) {
         return undefined;
     }
@@ -162,16 +211,19 @@ const getItems = (arr: any[]) => {
             return item;
         }
 
-        return { collection: item.collection.id, id: item.id };
+        return { collection: { id: item.collection.id }, id: item.id };
     });
 };
 
-const generateCursors = ({ before, after }: any): any => ({
-    before: before && base64EncodeObj({ before: getItems(before) }),
-    after: after && base64EncodeObj({ after: getItems(after) })
+const serializeCursors = ({
+    before,
+    after
+}: FaunaPaginatedQuery<any>): Cursors => ({
+    before: before && base64EncodeObj({ before: serializeCursor(before) }),
+    after: after && base64EncodeObj({ after: serializeCursor(after) })
 });
 
-const parseItems = (arr: any[]) => {
+const deserializeCursor = (arr?: SerializedCursor[]): any[] | undefined => {
     if (!arr) {
         return undefined;
     }
@@ -181,12 +233,12 @@ const parseItems = (arr: any[]) => {
             return item;
         }
 
-        return q.Ref(q.Collection(item.collection), item.id);
+        return q.Ref(q.Collection(item.collection.id), item.id);
     });
 };
 
-const parseCursor = (str: string) => {
-    const decoded = base64DecodeObj<any>(str);
+const deserializeCursors = (str?: string): DeserializedCursors => {
+    const decoded = base64DecodeObj<SerializedCursors>(str);
     if (!decoded) {
         return {
             before: undefined,
@@ -195,8 +247,8 @@ const parseCursor = (str: string) => {
     }
 
     return {
-        before: parseItems(decoded.before),
-        after: parseItems(decoded.after)
+        before: deserializeCursor(decoded.before),
+        after: deserializeCursor(decoded.after)
     };
 };
 

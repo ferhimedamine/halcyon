@@ -13,8 +13,8 @@ module.exports = gql`
         emailAddress: String!
         firstName: String!
         lastName: String!
-        dateOfBirth: Date!
-        isLockedOut: Boolean
+        dateOfBirth: DateTime!
+        isLockedOut: Boolean!
         roles: [String]
     }
 
@@ -36,16 +36,16 @@ module.exports = gql`
         password: String!
         firstName: String!
         lastName: String!
-        dateOfBirth: Date!
-        roles: [String]
+        dateOfBirth: DateTime!
+        roles: [String!]
     }
 
     input UpdateUserInput {
         emailAddress: String!
         firstName: String!
         lastName: String!
-        dateOfBirth: Date!
-        roles: [String]
+        dateOfBirth: DateTime!
+        roles: [String!]
     }
 
     type UserMutationResponse {
@@ -60,8 +60,8 @@ module.exports = gql`
     }
 
     extend type Mutation {
-        createUser(input: CreateUserInput): UserMutationResponse
-        updateUser(id: ID!, input: UpdateUserInput): UserMutationResponse
+        createUser(input: CreateUserInput!): UserMutationResponse
+        updateUser(id: ID!, input: UpdateUserInput!): UserMutationResponse
         lockUser(id: ID!): UserMutationResponse
         unlockUser(id: ID!): UserMutationResponse
         deleteUser(id: ID!): UserMutationResponse

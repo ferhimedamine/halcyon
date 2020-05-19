@@ -25,7 +25,7 @@ export const REGISTER = gql`
         $password: String!
         $firstName: String!
         $lastName: String!
-        $dateOfBirth: Date!
+        $dateOfBirth: DateTime!
     ) {
         register(
             input: {
@@ -79,7 +79,7 @@ export const UPDATE_PROFILE = gql`
         $emailAddress: String!
         $firstName: String!
         $lastName: String!
-        $dateOfBirth: Date!
+        $dateOfBirth: DateTime!
     ) {
         updateProfile(
             input: {
@@ -126,8 +126,8 @@ export const CREATE_USER = gql`
         $password: String!
         $firstName: String!
         $lastName: String!
-        $dateOfBirth: Date!
-        $roles: [String]
+        $dateOfBirth: DateTime!
+        $roles: [String!]
     ) {
         createUser(
             input: {
@@ -159,8 +159,8 @@ export const UPDATE_USER = gql`
         $emailAddress: String!
         $firstName: String!
         $lastName: String!
-        $dateOfBirth: Date!
-        $roles: [String]
+        $dateOfBirth: DateTime!
+        $roles: [String!]
     ) {
         updateUser(
             id: $id

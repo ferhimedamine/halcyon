@@ -6,11 +6,11 @@ module.exports = gql`
         password: String!
         firstName: String!
         lastName: String!
-        dateOfBirth: Date!
+        dateOfBirth: DateTime!
     }
 
     extend type Mutation {
-        register(input: RegisterInput): UserMutationResponse
+        register(input: RegisterInput!): UserMutationResponse
         forgotPassword(emailAddress: String!): MutationResponse
         resetPassword(
             token: String!

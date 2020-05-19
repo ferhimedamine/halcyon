@@ -5,7 +5,7 @@ module.exports = gql`
         emailAddress: String!
         firstName: String!
         lastName: String!
-        dateOfBirth: Date!
+        dateOfBirth: DateTime!
     }
 
     extend type Query {
@@ -13,7 +13,7 @@ module.exports = gql`
     }
 
     extend type Mutation {
-        updateProfile(input: UpdateProfileInput): UserMutationResponse
+        updateProfile(input: UpdateProfileInput!): UserMutationResponse
         changePassword(
             currentPassword: String!
             newPassword: String!

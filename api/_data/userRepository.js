@@ -10,7 +10,7 @@ module.exports.getUserById = async id => {
             q.Get(q.Ref(q.Collection('users'), id))
         );
 
-        return { ...result.data, id: result.ref.id };
+        return mapUser(result);
     } catch (error) {
         if (error.name === 'NotFound') {
             return undefined;

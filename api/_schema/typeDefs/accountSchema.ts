@@ -10,7 +10,7 @@ export const accountSchema = gql`
     }
 
     extend type Mutation {
-        register(input: RegisterInput): UserMutationResponse
+        register(input: RegisterInput!): UserMutationResponse
         forgotPassword(emailAddress: String!): MutationResponse
         resetPassword(
             token: String!

@@ -56,7 +56,7 @@ export type MutationChangePasswordArgs = {
 };
 
 export type MutationCreateUserArgs = {
-    input?: Maybe<CreateUserInput>;
+    input: CreateUserInput;
 };
 
 export type MutationDeleteUserArgs = {
@@ -68,7 +68,7 @@ export type MutationForgotPasswordArgs = {
 };
 
 export type MutationGenerateTokenArgs = {
-    input?: Maybe<TokenInput>;
+    input: TokenInput;
 };
 
 export type MutationLockUserArgs = {
@@ -76,7 +76,7 @@ export type MutationLockUserArgs = {
 };
 
 export type MutationRegisterArgs = {
-    input?: Maybe<RegisterInput>;
+    input: RegisterInput;
 };
 
 export type MutationResetPasswordArgs = {
@@ -90,12 +90,12 @@ export type MutationUnlockUserArgs = {
 };
 
 export type MutationUpdateProfileArgs = {
-    input?: Maybe<UpdateProfileInput>;
+    input: UpdateProfileInput;
 };
 
 export type MutationUpdateUserArgs = {
     id: Scalars['ID'];
-    input?: Maybe<UpdateUserInput>;
+    input: UpdateUserInput;
 };
 
 export type MutationResponse = {
@@ -117,7 +117,7 @@ export type QueryGetUserByIdArgs = {
 };
 
 export type QuerySearchUsersArgs = {
-    input?: Maybe<SearchUserInput>;
+    input: SearchUserInput;
 };
 
 export type RegisterInput = {
@@ -143,8 +143,8 @@ export type Token = {
 
 export type TokenInput = {
     grantType: GrantType;
-    emailAddress?: Maybe<Scalars['String']>;
-    password?: Maybe<Scalars['String']>;
+    emailAddress: Scalars['String'];
+    password: Scalars['String'];
 };
 
 export type UpdateProfileInput = {
@@ -169,7 +169,7 @@ export type User = {
     firstName: Scalars['String'];
     lastName: Scalars['String'];
     dateOfBirth: Scalars['DateTime'];
-    isLockedOut?: Maybe<Scalars['Boolean']>;
+    isLockedOut: Scalars['Boolean'];
     roles?: Maybe<Array<Scalars['String']>>;
 };
 
@@ -374,7 +374,7 @@ export type MutationResolvers<
         Maybe<ResolversTypes['UserMutationResponse']>,
         ParentType,
         ContextType,
-        RequireFields<MutationCreateUserArgs, never>
+        RequireFields<MutationCreateUserArgs, 'input'>
     >;
     deleteAccount?: Resolver<
         Maybe<ResolversTypes['UserMutationResponse']>,
@@ -397,7 +397,7 @@ export type MutationResolvers<
         Maybe<ResolversTypes['Token']>,
         ParentType,
         ContextType,
-        RequireFields<MutationGenerateTokenArgs, never>
+        RequireFields<MutationGenerateTokenArgs, 'input'>
     >;
     lockUser?: Resolver<
         Maybe<ResolversTypes['UserMutationResponse']>,
@@ -409,7 +409,7 @@ export type MutationResolvers<
         Maybe<ResolversTypes['UserMutationResponse']>,
         ParentType,
         ContextType,
-        RequireFields<MutationRegisterArgs, never>
+        RequireFields<MutationRegisterArgs, 'input'>
     >;
     resetPassword?: Resolver<
         Maybe<ResolversTypes['UserMutationResponse']>,
@@ -435,13 +435,13 @@ export type MutationResolvers<
         Maybe<ResolversTypes['UserMutationResponse']>,
         ParentType,
         ContextType,
-        RequireFields<MutationUpdateProfileArgs, never>
+        RequireFields<MutationUpdateProfileArgs, 'input'>
     >;
     updateUser?: Resolver<
         Maybe<ResolversTypes['UserMutationResponse']>,
         ParentType,
         ContextType,
-        RequireFields<MutationUpdateUserArgs, 'id'>
+        RequireFields<MutationUpdateUserArgs, 'id' | 'input'>
     >;
 }>;
 
@@ -478,7 +478,7 @@ export type QueryResolvers<
         Maybe<ResolversTypes['UserSearchResult']>,
         ParentType,
         ContextType,
-        RequireFields<QuerySearchUsersArgs, never>
+        RequireFields<QuerySearchUsersArgs, 'input'>
     >;
 }>;
 
@@ -500,11 +500,7 @@ export type UserResolvers<
     firstName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
     lastName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
     dateOfBirth?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-    isLockedOut?: Resolver<
-        Maybe<ResolversTypes['Boolean']>,
-        ParentType,
-        ContextType
-    >;
+    isLockedOut?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
     roles?: Resolver<
         Maybe<Array<ResolversTypes['String']>>,
         ParentType,

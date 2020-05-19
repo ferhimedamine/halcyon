@@ -13,7 +13,7 @@ export const manageSchema = gql`
     }
 
     extend type Mutation {
-        updateProfile(input: UpdateProfileInput): UserMutationResponse
+        updateProfile(input: UpdateProfileInput!): UserMutationResponse
         changePassword(
             currentPassword: String!
             newPassword: String!

@@ -62,9 +62,9 @@ export const updateUser = async (user: any) => {
     return mapUser(result);
 };
 
-export const removeUser = async (id: string) => {
+export const removeUser = async (user: any) => {
     const result = await client.query<any>(
-        q.Delete(q.Ref(q.Collection('users'), id))
+        q.Delete(q.Ref(q.Collection('users'), user.id))
     );
 
     return mapUser(result);

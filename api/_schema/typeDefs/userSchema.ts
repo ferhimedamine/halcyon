@@ -14,7 +14,7 @@ export const userSchema = gql`
         firstName: String!
         lastName: String!
         dateOfBirth: DateTime!
-        isLockedOut: Boolean
+        isLockedOut: Boolean!
         roles: [String!]
     }
 
@@ -60,8 +60,8 @@ export const userSchema = gql`
     }
 
     extend type Mutation {
-        createUser(input: CreateUserInput): UserMutationResponse
-        updateUser(id: ID!, input: UpdateUserInput): UserMutationResponse
+        createUser(input: CreateUserInput!): UserMutationResponse
+        updateUser(id: ID!, input: UpdateUserInput!): UserMutationResponse
         lockUser(id: ID!): UserMutationResponse
         unlockUser(id: ID!): UserMutationResponse
         deleteUser(id: ID!): UserMutationResponse

@@ -2,7 +2,11 @@ import { AuthenticationError, ForbiddenError } from 'apollo-server';
 import { ContextFunction } from 'apollo-server-core';
 import { skip } from 'graphql-resolvers';
 import { verifyToken } from '../_utils/jwt';
-import { isAuthorized } from '../_utils/auth';
+import { isAuthorized, DecodedToken } from '../_utils/auth';
+
+export interface Context {
+    payload?: DecodedToken;
+}
 
 export const context: ContextFunction = async ({ req, event }: any) => {
     const headers = (req || event).headers;

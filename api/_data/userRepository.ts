@@ -1,6 +1,6 @@
 import { Client, query as q } from 'faunadb';
 import { base64EncodeObj, base64DecodeObj } from '../_utils/encode';
-import config from '../_utils/config';
+import { config } from '../_utils/config';
 
 const client = new Client({ secret: config.FAUNADB_SECRET! });
 

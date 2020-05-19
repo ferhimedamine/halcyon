@@ -5,12 +5,18 @@ import {
     createUser,
     updateUser
 } from '../../_data/userRepository';
+import { MutationResolvers, QueryResolvers } from '../resolvers-types';
 import { sendEmail } from '../../_utils/email';
 import { generateHash } from '../../_utils/hash';
 
-export default {
+export interface AccountResolvers {
+    Query?: QueryResolvers;
+    Mutation?: MutationResolvers;
+}
+
+export const accountResolvers: AccountResolvers = {
     Mutation: {
-        register: async (_: any, { input }: any) => {
+        register: async (_, { input }) => {
             const existing = await getUserByEmailAddress(input.emailAddress);
             if (existing) {
                 throw new ApolloError(
@@ -35,7 +41,7 @@ export default {
                 user: result
             };
         },
-        forgotPassword: async (_: any, { emailAddress }: any) => {
+        forgotPassword: async (_, { emailAddress }) => {
             const user = await getUserByEmailAddress(emailAddress);
             if (user) {
                 user.passwordResetToken = uuidv4();
@@ -56,7 +62,7 @@ export default {
                 code: 'FORGOT_PASSWORD'
             };
         },
-        resetPassword: async (_: any, { token, emailAddress, newPassword }: any) => {
+        resetPassword: async (_, { token, emailAddress, newPassword }) => {
             const user = await getUserByEmailAddress(emailAddress);
             if (!user || user.passwordResetToken !== token) {
                 throw new ApolloError('Invalid token.', 'INVALID_TOKEN');

@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/node';
 import { PluginDefinition } from 'apollo-server-core';
-import config from './config';
+import { config } from './config';
 
 export const captureException = (error: Error) => {
     console.error(error);

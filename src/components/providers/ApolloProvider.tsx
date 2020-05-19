@@ -3,7 +3,7 @@ import { ApolloProvider as BaseApolloProvider } from '@apollo/react-hooks';
 import ApolloClient from 'apollo-boost';
 import { toast } from 'react-toastify';
 import { AuthContext } from './AuthProvider';
-import config from '../../utils/config';
+import { config } from '../../utils/config';
 
 export const ApolloProvider: React.FC = ({ children }) => {
     const { accessToken, removeToken } = useContext(AuthContext);

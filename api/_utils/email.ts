@@ -1,8 +1,8 @@
-import emailTemplates from '../_data/emailTemplates';
+import { emailTemplates } from '../_data/emailTemplates';
 import { format } from './string';
 import { fetch } from './http';
 import { base64Encode } from './encode';
-import config from './config';
+import { config } from './config';
 
 const mailgunUrl = `https://api.mailgun.net/v3/${config.MAILGUN_DOMAIN}/messages`;
 const mailgunAuth = `Basic ${base64Encode(`api:${config.MAILGUN_APIKEY}`)}`;

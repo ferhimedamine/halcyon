@@ -1,6 +1,6 @@
 import { gql } from 'apollo-server';
 
-export default gql`
+export const linkSchema = gql`
     scalar DateTime
 
     type MutationResponse {

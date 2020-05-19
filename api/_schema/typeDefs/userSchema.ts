@@ -1,6 +1,6 @@
 import { gql } from 'apollo-server';
 
-export default gql`
+export const userSchema = gql`
     enum UserSortExpression {
         NAME_ASC
         NAME_DESC

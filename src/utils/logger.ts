@@ -1,7 +1,7 @@
 import { ErrorInfo } from 'react';
 import * as Sentry from '@sentry/browser';
 import { DecodedToken } from './auth';
-import config from './config';
+import { config } from './config';
 
 export const initializeLogger = () =>
     Sentry.init({

@@ -6,20 +6,26 @@ import {
     updateUser,
     removeUser
 } from '../../_data/userRepository';
+import { MutationResolvers, QueryResolvers } from '../resolvers-types';
 import { isAuthenticated } from '../context';
 import { generateHash, verifyHash } from '../../_utils/hash';
 
-export default {
+export interface ManageResolvers {
+    Query?: QueryResolvers;
+    Mutation?: MutationResolvers;
+}
+
+export const manageResolvers: ManageResolvers = {
     Query: {
         getProfile: combineResolvers(
             isAuthenticated(),
-            async (_: any, __: any, { payload }: any) => getUserById(payload.sub)
+            async (_, __, { payload }) => getUserById(payload.sub)
         )
     },
     Mutation: {
         updateProfile: combineResolvers(
             isAuthenticated(),
-            async (_: any, { input }: any, { payload }: any) => {
+            async (_, { input }, { payload }) => {
                 const user = await getUserById(payload.sub);
                 if (!user) {
                     throw new ApolloError('User not found.', 'USER_NOT_FOUND');
@@ -53,7 +59,7 @@ export default {
         ),
         changePassword: combineResolvers(
             isAuthenticated(),
-            async (_: any, { currentPassword, newPassword }: any, { payload }: any) => {
+            async (_, { currentPassword, newPassword }, { payload }) => {
                 const user = await getUserById(payload.sub);
                 if (!user) {
                     throw new ApolloError('User not found.', 'USER_NOT_FOUND');
@@ -84,7 +90,7 @@ export default {
         ),
         deleteAccount: combineResolvers(
             isAuthenticated(),
-            async (_: any, __: any, { payload }: any) => {
+            async (_, __, { payload }) => {
                 const user = await getUserById(payload.sub);
                 if (!user) {
                     throw new ApolloError('User not found.', 'USER_NOT_FOUND');

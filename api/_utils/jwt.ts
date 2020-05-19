@@ -1,7 +1,7 @@
 import { sign, verify } from 'jsonwebtoken';
 import { User } from '../_data/userRepository';
 import { DecodedToken } from './auth';
-import config from './config';
+import { config } from './config';
 
 export const verifyToken = async (token: string) => {
     try {

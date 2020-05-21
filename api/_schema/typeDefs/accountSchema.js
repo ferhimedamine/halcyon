@@ -9,13 +9,15 @@ module.exports = gql`
         dateOfBirth: DateTime!
     }
 
+    input ResetPasswordInput {
+        token: String!
+        emailAddress: String!
+        newPassword: String!
+    }
+
     extend type Mutation {
         register(input: RegisterInput!): UserMutationResponse
         forgotPassword(emailAddress: String!): MutationResponse
-        resetPassword(
-            token: String!
-            emailAddress: String!
-            newPassword: String!
-        ): UserMutationResponse
+        resetPassword(input: ResetPasswordInput!): UserMutationResponse
     }
 `;

@@ -56,13 +56,13 @@ module.exports = {
                 code: 'FORGOT_PASSWORD'
             };
         },
-        resetPassword: async (_, { token, emailAddress, newPassword }) => {
-            const user = await getUserByEmailAddress(emailAddress);
-            if (!user || user.passwordResetToken !== token) {
+        resetPassword: async (_, { input }) => {
+            const user = await getUserByEmailAddress(input.emailAddress);
+            if (!user || user.passwordResetToken !== input.token) {
                 throw new ApolloError('Invalid token.', 'INVALID_TOKEN');
             }
 
-            user.password = await generateHash(newPassword);
+            user.password = await generateHash(input.newPassword);
             user.passwordResetToken = undefined;
             await updateUser(user);
 

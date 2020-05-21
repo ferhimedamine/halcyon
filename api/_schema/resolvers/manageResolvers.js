@@ -46,36 +46,34 @@ module.exports = {
                 user
             };
         }),
-        changePassword: isAuthenticated(
-            async (_, { currentPassword, newPassword }, { payload }) => {
-                const user = await getUserById(payload.sub);
-                if (!user) {
-                    throw new ApolloError('User not found.', 'USER_NOT_FOUND');
-                }
-
-                const verified = await verifyHash(
-                    currentPassword,
-                    user.password
-                );
-
-                if (!verified) {
-                    throw new ApolloError(
-                        'Incorrect password.',
-                        'INCORRECT_PASSWORD'
-                    );
-                }
-
-                user.password = await generateHash(newPassword);
-                user.passwordResetToken = undefined;
-                await updateUser(user);
-
-                return {
-                    message: 'Your password has been changed.',
-                    code: 'PASSWORD_CHANGED',
-                    user
-                };
+        changePassword: isAuthenticated(async (_, { input }, { payload }) => {
+            const user = await getUserById(payload.sub);
+            if (!user) {
+                throw new ApolloError('User not found.', 'USER_NOT_FOUND');
             }
-        ),
+
+            const verified = await verifyHash(
+                input.currentPassword,
+                user.password
+            );
+
+            if (!verified) {
+                throw new ApolloError(
+                    'Incorrect password.',
+                    'INCORRECT_PASSWORD'
+                );
+            }
+
+            user.password = await generateHash(input.newPassword);
+            user.passwordResetToken = undefined;
+            await updateUser(user);
+
+            return {
+                message: 'Your password has been changed.',
+                code: 'PASSWORD_CHANGED',
+                user
+            };
+        }),
         deleteAccount: isAuthenticated(async (_, __, { payload }) => {
             const user = await getUserById(payload.sub);
             if (!user) {

@@ -2,9 +2,9 @@ const { AuthenticationError, ForbiddenError } = require('apollo-server');
 const { verifyToken } = require('../_utils/jwt');
 const { isAuthorized } = require('../_utils/auth');
 
-module.exports.context = async ({ req, event }) => {
-    const headers = (req || event).headers;
-    const authHeader = headers.authorization || headers.Authorization || '';
+module.exports.context = async ({ req }) => {
+    const authHeader =
+        req.headers.authorization || req.headers.Authorization || '';
 
     const token = authHeader.replace(/bearer /giu, '');
     if (!token) {

@@ -65,9 +65,11 @@ export const RESET_PASSWORD = gql`
         $newPassword: String!
     ) {
         resetPassword(
-            token: $token
-            emailAddress: $emailAddress
-            newPassword: $newPassword
+            input: {
+                token: $token
+                emailAddress: $emailAddress
+                newPassword: $newPassword
+            }
         ) {
             message
         }
@@ -104,8 +106,10 @@ export const UPDATE_PROFILE = gql`
 export const CHANGE_PASSWORD = gql`
     mutation ChangePassword($currentPassword: String!, $newPassword: String!) {
         changePassword(
-            currentPassword: $currentPassword
-            newPassword: $newPassword
+            input: {
+                currentPassword: $currentPassword
+                newPassword: $newPassword
+            }
         ) {
             message
         }

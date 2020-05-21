@@ -35,7 +35,8 @@ export const ApolloProvider = ({ children }) => {
 
                         default:
                             toast.error(
-                                'An unknown error has occurred whilst communicating with the server.'
+                                graphQLError.message ||
+                                    'An unknown error has occurred whilst communicating with the server.'
                             );
 
                             break;

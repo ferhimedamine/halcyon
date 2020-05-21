@@ -39,21 +39,13 @@ export const UpdateUserPage = ({ history, match }) => {
         variables: { id: match.params.id }
     });
 
-    const [updateUser] = useMutation(UPDATE_USER, {
-        variables: { id: match.params.id }
-    });
+    const [updateUser] = useMutation(UPDATE_USER);
 
-    const [lockUser, { loading: isLocking }] = useMutation(LOCK_USER, {
-        variables: { id: match.params.id }
-    });
+    const [lockUser, { loading: isLocking }] = useMutation(LOCK_USER);
 
-    const [unlockUser, { loading: isUnlocking }] = useMutation(UNLOCK_USER, {
-        variables: { id: match.params.id }
-    });
+    const [unlockUser, { loading: isUnlocking }] = useMutation(UNLOCK_USER);
 
-    const [deleteUser, { loading: isDeleting }] = useMutation(DELETE_USER, {
-        variables: { id: match.params.id }
-    });
+    const [deleteUser, { loading: isDeleting }] = useMutation(DELETE_USER);
 
     if (loading) {
         return <Spinner />;
@@ -69,7 +61,10 @@ export const UpdateUserPage = ({ history, match }) => {
 
     const onSubmit = async variables => {
         try {
-            const result = await updateUser({ variables });
+            const result = await updateUser({
+                variables: { id: match.params.id, ...variables }
+            });
+
             toast.success(result.data.updateUser.message);
             history.push('/user');
         } catch (error) {
@@ -96,8 +91,14 @@ export const UpdateUserPage = ({ history, match }) => {
             return;
         }
 
-        const result = await lockUser();
-        toast.success(result.data.lockUser.message);
+        try {
+            const result = await lockUser({
+                variables: { id: match.params.id }
+            });
+            toast.success(result.data.lockUser.message);
+        } catch (error) {
+            captureException(error);
+        }
     };
 
     const onUnlockUser = async () => {
@@ -119,8 +120,14 @@ export const UpdateUserPage = ({ history, match }) => {
             return;
         }
 
-        const result = await unlockUser();
-        toast.success(result.data.unlockUser.message);
+        try {
+            const result = await unlockUser({
+                variables: { id: match.params.id }
+            });
+            toast.success(result.data.unlockUser.message);
+        } catch (error) {
+            captureException(error);
+        }
     };
 
     const onDeleteUser = async () => {
@@ -142,9 +149,15 @@ export const UpdateUserPage = ({ history, match }) => {
             return;
         }
 
-        const result = await deleteUser();
-        toast.success(result.data.deleteUser.message);
-        history.push('/user');
+        try {
+            const result = await deleteUser({
+                variables: { id: match.params.id }
+            });
+            toast.success(result.data.deleteUser.message);
+            history.push('/user');
+        } catch (error) {
+            captureException(error);
+        }
     };
 
     return (

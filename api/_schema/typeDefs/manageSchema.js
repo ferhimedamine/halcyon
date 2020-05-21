@@ -8,16 +8,18 @@ module.exports = gql`
         dateOfBirth: DateTime!
     }
 
+    input ChangePasswordInput {
+        currentPassword: String!
+        newPassword: String!
+    }
+
     extend type Query {
         getProfile: User
     }
 
     extend type Mutation {
         updateProfile(input: UpdateProfileInput!): UserMutationResponse
-        changePassword(
-            currentPassword: String!
-            newPassword: String!
-        ): UserMutationResponse
+        changePassword(input: ChangePasswordInput!): UserMutationResponse
         deleteAccount: UserMutationResponse
     }
 `;

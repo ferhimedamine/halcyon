@@ -41,15 +41,16 @@ export const RegisterPage = ({ history }) => {
 
     const [register] = useMutation(REGISTER);
 
-    const [generateToken] = useMutation(GENERATE_TOKEN, {
-        variables: { grantType: 'PASSWORD' }
-    });
+    const [generateToken] = useMutation(GENERATE_TOKEN);
 
     const onSubmit = async variables => {
         try {
             await register({ mutation: REGISTER, variables });
 
-            const result = await generateToken({ variables });
+            const result = await generateToken({
+                variables: { grantType: 'PASSWORD', ...variables }
+            });
+
             setToken(result.data.generateToken.accessToken);
             history.push('/');
         } catch (error) {

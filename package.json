@@ -24,7 +24,6 @@
         "faunadb": "2.13.1",
         "formik": "2.1.4",
         "graphql-iso-date": "3.6.1",
-        "graphql-resolvers": "0.4.2",
         "jsonwebtoken": "8.5.1",
         "jwt-decode": "2.2.0",
         "moment": "2.24.0",

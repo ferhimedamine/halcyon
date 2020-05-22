@@ -22,13 +22,13 @@ const validationSchema = Yup.object().shape({
 export const LoginPage = ({ history }) => {
     const { setToken } = useContext(AuthContext);
 
-    const [generateToken] = useMutation(GENERATE_TOKEN, {
-        variables: { grantType: 'PASSWORD' }
-    });
+    const [generateToken] = useMutation(GENERATE_TOKEN);
 
     const onSubmit = async variables => {
         try {
-            const result = await generateToken({ variables });
+            const result = await generateToken({
+                variables: { grantType: 'PASSWORD', ...variables }
+            });
 
             setToken(
                 result.data.generateToken.accessToken,

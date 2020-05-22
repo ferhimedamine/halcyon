@@ -9,9 +9,7 @@ module.exports = async (req, res) => {
     const token = authHeader.replace(/bearer /giu, '');
     const payload = token ? await verifyToken(token) : undefined;
     if (!payload) {
-        return res
-            .status(401)
-            .send('The token provided was invalid.');
+        return res.status(401).send('The token provided was invalid.');
     }
 
     const authorized = isAuthorized(payload, USER_ADMINISTRATOR);

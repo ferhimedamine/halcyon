@@ -27,13 +27,14 @@ const validationSchema = Yup.object().shape({
 });
 
 export const ResetPasswordPage = ({ match, history }) => {
-    const [resetPassword] = useMutation(RESET_PASSWORD, {
-        variables: { token: match.params.token }
-    });
+    const [resetPassword] = useMutation(RESET_PASSWORD);
 
     const onSubmit = async variables => {
         try {
-            const result = await resetPassword({ variables });
+            const result = await resetPassword({
+                variables: { token: match.params.token, ...variables }
+            });
+
             toast.success(result.data.resetPassword.message);
             history.push('/login');
         } catch (error) {

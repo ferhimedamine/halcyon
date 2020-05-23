@@ -1,9 +1,0 @@
-mutation LockUser($id: ID!) {
-    lockUser(id: $id) {
-        message
-        user {
-            id
-            isLockedOut
-        }
-    }
-}

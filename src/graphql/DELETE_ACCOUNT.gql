@@ -1,5 +1,0 @@
-mutation DeleteAccount {
-    deleteAccount {
-        message
-    }
-}

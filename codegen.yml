@@ -11,7 +11,7 @@ generates:
             useIndexSignature: true
 
     src/graphql/gen-types.tsx:
-        documents: ./src/graphql/**/*.gql
+        documents: ./src/graphql/**/*.ts
         plugins:
             - typescript
             - typescript-operations

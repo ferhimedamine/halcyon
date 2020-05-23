@@ -19,6 +19,11 @@ export type Scalars = {
     DateTime: any;
 };
 
+export type ChangePasswordInput = {
+    currentPassword: Scalars['String'];
+    newPassword: Scalars['String'];
+};
+
 export type CreateUserInput = {
     emailAddress: Scalars['String'];
     password: Scalars['String'];
@@ -51,8 +56,7 @@ export type Mutation = {
 };
 
 export type MutationChangePasswordArgs = {
-    currentPassword: Scalars['String'];
-    newPassword: Scalars['String'];
+    input: ChangePasswordInput;
 };
 
 export type MutationCreateUserArgs = {
@@ -80,9 +84,7 @@ export type MutationRegisterArgs = {
 };
 
 export type MutationResetPasswordArgs = {
-    token: Scalars['String'];
-    emailAddress: Scalars['String'];
-    newPassword: Scalars['String'];
+    input: ResetPasswordInput;
 };
 
 export type MutationUnlockUserArgs = {
@@ -126,6 +128,12 @@ export type RegisterInput = {
     firstName: Scalars['String'];
     lastName: Scalars['String'];
     dateOfBirth: Scalars['DateTime'];
+};
+
+export type ResetPasswordInput = {
+    token: Scalars['String'];
+    emailAddress: Scalars['String'];
+    newPassword: Scalars['String'];
 };
 
 export type SearchUserInput = {
@@ -316,6 +324,7 @@ export type ResolversTypes = ResolversObject<{
     UserSortExpression: UserSortExpression;
     UserSearchResult: ResolverTypeWrapper<UserSearchResult>;
     Mutation: ResolverTypeWrapper<{}>;
+    ChangePasswordInput: ChangePasswordInput;
     UserMutationResponse: ResolverTypeWrapper<UserMutationResponse>;
     CreateUserInput: CreateUserInput;
     MutationResponse: ResolverTypeWrapper<MutationResponse>;
@@ -323,6 +332,7 @@ export type ResolversTypes = ResolversObject<{
     GrantType: GrantType;
     Token: ResolverTypeWrapper<Token>;
     RegisterInput: RegisterInput;
+    ResetPasswordInput: ResetPasswordInput;
     UpdateProfileInput: UpdateProfileInput;
     UpdateUserInput: UpdateUserInput;
 }>;
@@ -340,6 +350,7 @@ export type ResolversParentTypes = ResolversObject<{
     UserSortExpression: UserSortExpression;
     UserSearchResult: UserSearchResult;
     Mutation: {};
+    ChangePasswordInput: ChangePasswordInput;
     UserMutationResponse: UserMutationResponse;
     CreateUserInput: CreateUserInput;
     MutationResponse: MutationResponse;
@@ -347,6 +358,7 @@ export type ResolversParentTypes = ResolversObject<{
     GrantType: GrantType;
     Token: Token;
     RegisterInput: RegisterInput;
+    ResetPasswordInput: ResetPasswordInput;
     UpdateProfileInput: UpdateProfileInput;
     UpdateUserInput: UpdateUserInput;
 }>;
@@ -365,10 +377,7 @@ export type MutationResolvers<
         Maybe<ResolversTypes['UserMutationResponse']>,
         ParentType,
         ContextType,
-        RequireFields<
-            MutationChangePasswordArgs,
-            'currentPassword' | 'newPassword'
-        >
+        RequireFields<MutationChangePasswordArgs, 'input'>
     >;
     createUser?: Resolver<
         Maybe<ResolversTypes['UserMutationResponse']>,
@@ -415,10 +424,7 @@ export type MutationResolvers<
         Maybe<ResolversTypes['UserMutationResponse']>,
         ParentType,
         ContextType,
-        RequireFields<
-            MutationResetPasswordArgs,
-            'token' | 'emailAddress' | 'newPassword'
-        >
+        RequireFields<MutationResetPasswordArgs, 'input'>
     >;
     seedData?: Resolver<
         Maybe<ResolversTypes['MutationResponse']>,

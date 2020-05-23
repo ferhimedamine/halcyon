@@ -55,7 +55,7 @@ export const userSchema = gql`
     }
 
     extend type Query {
-        searchUsers(input: SearchUserInput): UserSearchResult
+        searchUsers(input: SearchUserInput!): UserSearchResult
         getUserById(id: ID!): User
     }
 

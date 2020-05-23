@@ -1,34 +1,52 @@
-import { Client, query as q, Expr } from 'faunadb';
+import { Client, query as q } from 'faunadb';
 import { base64EncodeObj, base64DecodeObj } from '../_utils/encode';
 import { config } from '../_utils/config';
 
 const client = new Client({ secret: config.FAUNADB_SECRET! });
+
+const collections: { [key: string]: string } = {
+    USERS: 'users'
+};
+
+const indexes: { [key: string]: { name: string; values?: string[] } } = {
+    USERS_BY_EMAIL_ADDRESS: { name: 'users_by_email_address' },
+    USERS_EMAIL_ADDRESS_DESC: {
+        name: 'users_email_address_desc',
+        values: ['emailAddress', 'firstName', 'lastName', 'ref']
+    },
+    USERS_EMAIL_ADDRESS_ASC: {
+        name: 'users_email_address_asc',
+        values: ['emailAddress', 'firstName', 'lastName', 'ref']
+    },
+    USERS_NAME_DESC: {
+        name: 'users_name_desc',
+        values: ['firstName', 'lastName', 'emailAddress', 'ref']
+    },
+    USERS_NAME_ASC: {
+        name: 'users_name_asc',
+        values: ['firstName', 'lastName', 'emailAddress', 'ref']
+    }
+};
+
+const errors: { [key: string]: string } = {
+    NOT_FOUND: 'NotFound'
+};
 
 export interface FaunaIndex {
     name: string;
     values: string[];
 }
 
-export interface SerializedCursor {
+export interface FaunaCursor {
     id: string;
     collection: {
         id: string;
     };
 }
 
-export interface SerializedCursors {
-    before?: SerializedCursor[];
-    after?: SerializedCursor[];
-}
-
-export interface DeserializedCursors {
-    before?: any[];
-    after?: any[];
-}
-
-export interface Cursors {
-    before?: string;
-    after?: string;
+export interface FaunaCursors {
+    before?: FaunaCursor[];
+    after?: FaunaCursor[];
 }
 
 export interface FaunaQuery<T> {
@@ -38,8 +56,8 @@ export interface FaunaQuery<T> {
 
 export interface FaunaPaginatedQuery<T> {
     data: FaunaQuery<T>[];
-    before?: Expr[];
-    after?: Expr[];
+    before?: FaunaCursor[];
+    after?: FaunaCursor[];
 }
 
 export interface Cursors {
@@ -67,9 +85,9 @@ export interface User extends UserData {
 }
 
 export interface UserFilter {
-    size: number;
-    search: string;
-    sort: string;
+    size?: number;
+    search?: string;
+    sort?: string;
     cursor?: string;
 }
 
@@ -80,12 +98,12 @@ export interface Users extends Cursors {
 export const getUserById = async (id: string) => {
     try {
         const result = await client.query<UserQuery>(
-            q.Get(q.Ref(q.Collection('users'), id))
+            q.Get(q.Ref(q.Collection(collections.USERS), id))
         );
 
         return mapUser(result);
     } catch (error) {
-        if (error.name === 'NotFound') {
+        if (error.name === errors.NOT_FOUND) {
             return undefined;
         }
 
@@ -96,12 +114,17 @@ export const getUserById = async (id: string) => {
 export const getUserByEmailAddress = async (emailAddress: string) => {
     try {
         const result = await client.query<UserQuery>(
-            q.Get(q.Match(q.Index('users_by_email_address'), emailAddress))
+            q.Get(
+                q.Match(
+                    q.Index(indexes.USERS_BY_EMAIL_ADDRESS.name),
+                    emailAddress
+                )
+            )
         );
 
         return mapUser(result);
     } catch (error) {
-        if (error.name === 'NotFound') {
+        if (error.name === errors.NOT_FOUND) {
             return undefined;
         }
 
@@ -111,7 +134,7 @@ export const getUserByEmailAddress = async (emailAddress: string) => {
 
 export const createUser = async (user: UserData) => {
     const result = await client.query<UserQuery>(
-        q.Create(q.Collection('users'), { data: user })
+        q.Create(q.Collection(collections.USERS), { data: user })
     );
 
     return mapUser(result);
@@ -121,7 +144,7 @@ export const updateUser = async (user: User) => {
     const { id, ...data } = user;
 
     const result = await client.query<UserQuery>(
-        q.Replace(q.Ref(q.Collection('users'), id), { data })
+        q.Replace(q.Ref(q.Collection(collections.USERS), id), { data })
     );
 
     return mapUser(result);
@@ -129,20 +152,15 @@ export const updateUser = async (user: User) => {
 
 export const removeUser = async (user: User) => {
     const result = await client.query<UserQuery>(
-        q.Delete(q.Ref(q.Collection('users'), user.id))
+        q.Delete(q.Ref(q.Collection(collections.USERS), user.id))
     );
 
     return mapUser(result);
 };
 
-export const searchUsers = async ({
-    size,
-    search,
-    sort,
-    cursor
-}: UserFilter): Promise<Users> => {
-    const { name, values } = getIndex(sort);
-    const { before, after } = deserializeCursors(cursor);
+export const searchUsers = async (filter: UserFilter): Promise<Users> => {
+    const { name, values } = (indexes[filter.sort || '']) || indexes.USERS_NAME_ASC;
+    const { before, after } = parseStringCursor(filter.cursor);
 
     const result = await client.query<UserPaginatedQuery>(
         q.Map(
@@ -150,58 +168,32 @@ export const searchUsers = async ({
                 q.Filter(
                     q.Match(name),
                     q.Lambda(
-                        values,
+                        values!,
                         q.ContainsStr(
                             q.Casefold(q.Var('emailAddress')),
-                            q.Casefold(search)
+                            q.Casefold(filter.search || '')
                         )
                     )
                 ),
                 {
-                    size,
+                    size: filter.size,
                     before,
                     after
                 }
             ),
-            q.Lambda(values, q.Get(q.Var('ref')))
+            q.Lambda(values!, q.Get(q.Var('ref')))
         )
     );
 
     return {
         items: result.data.map(mapUser),
-        ...serializeCursors(result)
+        ...generateStringCursors(result)
     };
 };
 
-const getIndex = (sort: string): FaunaIndex => {
-    switch (sort) {
-        case 'EMAIL_ADDRESS_DESC':
-            return {
-                name: 'users_email_address_desc',
-                values: ['emailAddress', 'firstName', 'lastName', 'ref']
-            };
-
-        case 'EMAIL_ADDRESS_ASC':
-            return {
-                name: 'users_email_address_asc',
-                values: ['emailAddress', 'firstName', 'lastName', 'ref']
-            };
-
-        case 'NAME_DESC':
-            return {
-                name: 'users_name_desc',
-                values: ['firstName', 'lastName', 'emailAddress', 'ref']
-            };
-
-        default:
-            return {
-                name: 'users_name_asc',
-                values: ['firstName', 'lastName', 'emailAddress', 'ref']
-            };
-    }
-};
-
-const serializeCursor = (arr: any[]): SerializedCursor[] | undefined => {
+const generateStringItems = (
+    arr?: FaunaCursor[]
+): FaunaCursor[] | undefined => {
     if (!arr) {
         return undefined;
     }
@@ -215,15 +207,19 @@ const serializeCursor = (arr: any[]): SerializedCursor[] | undefined => {
     });
 };
 
-const serializeCursors = ({
-    before,
-    after
-}: FaunaPaginatedQuery<any>): Cursors => ({
-    before: before && base64EncodeObj({ before: serializeCursor(before) }),
-    after: after && base64EncodeObj({ after: serializeCursor(after) })
-});
+const generateStringCursors = (cursors: FaunaCursors): Cursors => {
+    const before =
+        cursors.before &&
+        base64EncodeObj({ before: generateStringItems(cursors.before) });
 
-const deserializeCursor = (arr?: SerializedCursor[]): any[] | undefined => {
+    const after =
+        cursors.after &&
+        base64EncodeObj({ after: generateStringItems(cursors.after) });
+
+    return { before, after };
+};
+
+const parseStringItems = (arr?: FaunaCursor[]): FaunaCursor[] | undefined => {
     if (!arr) {
         return undefined;
     }
@@ -233,23 +229,19 @@ const deserializeCursor = (arr?: SerializedCursor[]): any[] | undefined => {
             return item;
         }
 
-        return q.Ref(q.Collection(item.collection.id), item.id);
+        return q.Ref(q.Collection(item.collection.id), item.id) as FaunaCursor;
     });
 };
 
-const deserializeCursors = (str?: string): DeserializedCursors => {
-    const decoded = base64DecodeObj<SerializedCursors>(str);
-    if (!decoded) {
-        return {
-            before: undefined,
-            after: undefined
-        };
-    }
+const parseStringCursor = (str?: string): FaunaCursors => {
+    const decoded = base64DecodeObj<FaunaCursors>(str);
 
-    return {
-        before: deserializeCursor(decoded.before),
-        after: deserializeCursor(decoded.after)
-    };
+    const before =
+        decoded && decoded.before && parseStringItems(decoded.before);
+
+    const after = decoded && decoded.after && parseStringItems(decoded.after);
+
+    return { before, after };
 };
 
 const mapUser = (user: UserQuery): User => ({ id: user.ref.id, ...user.data });

@@ -134,7 +134,7 @@ export const UserPage: React.FC = () => {
                 </Alert>
             ) : (
                 <>
-                    {data.searchUsers.items?.map((user: any) => (
+                    {data.searchUsers.items?.map(user => (
                         <Card
                             key={user.id}
                             to={`/user/${user.id}`}
@@ -155,7 +155,7 @@ export const UserPage: React.FC = () => {
                                         Locked
                                     </Badge>
                                 )}
-                                {user.roles.map((role: any) => (
+                                {user.roles?.map(role => (
                                     <Badge
                                         key={role}
                                         color="primary"

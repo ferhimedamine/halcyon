@@ -11,7 +11,7 @@ export const seedResolvers: Resolvers = {
     Mutation: {
         seedData: async () => {
             const existing = await getUserByEmailAddress(
-                config.SEED_EMAILADDRESS!
+                config.SEED_EMAILADDRESS
             );
 
             if (existing) {
@@ -19,8 +19,8 @@ export const seedResolvers: Resolvers = {
             }
 
             await createUser({
-                emailAddress: config.SEED_EMAILADDRESS!,
-                password: await generateHash(config.SEED_PASSWORD!),
+                emailAddress: config.SEED_EMAILADDRESS,
+                password: await generateHash(config.SEED_PASSWORD),
                 firstName: 'System',
                 lastName: 'Administrator',
                 dateOfBirth: new Date(1970, 0, 1).toISOString(),

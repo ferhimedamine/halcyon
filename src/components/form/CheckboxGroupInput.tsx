@@ -2,7 +2,7 @@ import React from 'react';
 import { FieldProps } from 'formik';
 import { FormGroup, Label, FormText, Input } from 'reactstrap';
 
-export interface CheckboxGroupInputProps extends FieldProps {
+export interface CheckboxGroupInputProps extends FieldProps<string[]> {
     label: string;
     options: string[];
 }
@@ -56,9 +56,7 @@ export const CheckboxGroupInput: React.FC<CheckboxGroupInputProps> = ({
                             id={`${name}.${option}`}
                             name={`${name}.${option}`}
                             type="checkbox"
-                            checked={
-                                !!values.find((item: any) => item === option)
-                            }
+                            checked={!!values.find(item => item === option)}
                             invalid={!!touch && !!error}
                             onChange={event =>
                                 handleChange(option, event.target.checked)

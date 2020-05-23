@@ -2,14 +2,14 @@ import { Client, query as q } from 'faunadb';
 import { base64EncodeObj, base64DecodeObj } from '../_utils/encode';
 import { config } from '../_utils/config';
 
-const client = new Client({ secret: config.FAUNADB_SECRET! });
+const client = new Client({ secret: config.FAUNADB_SECRET });
 
 const collections: { [key: string]: string } = {
     USERS: 'users'
 };
 
-const indexes: { [key: string]: { name: string; values?: string[] } } = {
-    USERS_BY_EMAIL_ADDRESS: { name: 'users_by_email_address' },
+const indexes: { [key: string]: { name: string; values: string[] } } = {
+    USERS_BY_EMAIL_ADDRESS: { name: 'users_by_email_address', values: [] },
     USERS_EMAIL_ADDRESS_DESC: {
         name: 'users_email_address_desc',
         values: ['emailAddress', 'firstName', 'lastName', 'ref']
@@ -159,7 +159,8 @@ export const removeUser = async (user: User) => {
 };
 
 export const searchUsers = async (filter: UserFilter): Promise<Users> => {
-    const { name, values } = (indexes[filter.sort || '']) || indexes.USERS_NAME_ASC;
+    const { name, values } =
+        indexes[filter.sort || ''] || indexes.USERS_NAME_ASC;
     const { before, after } = parseStringCursor(filter.cursor);
 
     const result = await client.query<UserPaginatedQuery>(
@@ -168,7 +169,7 @@ export const searchUsers = async (filter: UserFilter): Promise<Users> => {
                 q.Filter(
                     q.Match(name),
                     q.Lambda(
-                        values!,
+                        values,
                         q.ContainsStr(
                             q.Casefold(q.Var('emailAddress')),
                             q.Casefold(filter.search || '')
@@ -181,7 +182,7 @@ export const searchUsers = async (filter: UserFilter): Promise<Users> => {
                     after
                 }
             ),
-            q.Lambda(values!, q.Get(q.Var('ref')))
+            q.Lambda(values, q.Get(q.Var('ref')))
         )
     );
 

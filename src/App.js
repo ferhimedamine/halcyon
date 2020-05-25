@@ -97,7 +97,7 @@ export const App = () => (
                             component={UpdateUserPage}
                             exact
                         />
-                        <PublicRoute component={NotFoundPage} exact />
+                        <PublicRoute component={NotFoundPage} />
                     </Switch>
                 </ErrorBoundary>
                 <Footer />

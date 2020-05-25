@@ -12,7 +12,6 @@ export const TextInput = ({ field, form, label, ...rest }) => {
             <Label for={name}>{label}</Label>
             <Input
                 id={name}
-                name={name}
                 invalid={!!touch && !!error}
                 {...field}
                 {...rest}

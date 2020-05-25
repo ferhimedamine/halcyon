@@ -11,7 +11,7 @@ export * from './deleteAccount';
 
 export * from './searchUsers';
 export * from './createUser';
-export * from './getUserById'
+export * from './getUserById';
 export * from './updateUser';
 export * from './lockUser';
 export * from './unlockUser';

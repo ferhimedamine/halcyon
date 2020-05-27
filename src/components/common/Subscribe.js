@@ -14,7 +14,7 @@ export const Subscribe = () => {
 
         const pusher = new Pusher(config.PUSHER_APPKEY, {
             cluster: config.PUSHER_CLUSTER,
-            authEndpoint: '/api/auth',
+            authEndpoint: `${config.GRAPHQL_URL}/auth`,
             auth: {
                 headers: {
                     authorization: accessToken

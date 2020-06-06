@@ -16,7 +16,7 @@
         "@sentry/browser": "5.15.5",
         "@sentry/node": "5.15.5",
         "apollo-boost": "0.4.7",
-        "apollo-server": "2.12.0",
+        "apollo-server": "2.14.2",
         "apollo-server-micro": "2.12.0",
         "bcryptjs": "2.4.3",
         "bootstrap": "4.4.1",
